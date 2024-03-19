@@ -1,4 +1,4 @@
-package com.imrul.educonnect.ui.presentation.register.model
+package com.imrul.educonnect.presentation.register.model
 
 import com.google.firebase.auth.FirebaseUser
 
