@@ -1,5 +1,6 @@
 package com.imrul.educonnect.presentation.register
 
+import android.provider.CalendarContract
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -15,7 +16,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -30,7 +33,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.imrul.educonnect.R
 import com.imrul.educonnect.core.Constants.Companion.ALREADY_HAVE_AN_ACCOUNT
 import com.imrul.educonnect.core.Constants.Companion.CONFIRM_PASSWORD_PLACEHOLDER
@@ -41,8 +46,10 @@ import com.imrul.educonnect.core.Constants.Companion.SIGN_UP
 import com.imrul.educonnect.core.Constants.Companion.SIGN_UP_WITH
 import com.imrul.educonnect.core.Constants.Companion.USERNAME_PLACEHOLDER
 import com.imrul.educonnect.presentation.components.OAuthButton
+import com.imrul.educonnect.ui.theme.poppinsFontFamily
 import dagger.hilt.android.qualifiers.ApplicationContext
 
+@Preview(showBackground = true)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen() {
@@ -59,8 +66,8 @@ fun RegisterScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Color.White) // Set the background color here
-    ){
+            .background(color = MaterialTheme.colorScheme.background) // Set the background color here
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -105,7 +112,7 @@ fun RegisterScreen() {
                 onClick = { /*TODO*/ },
                 shape = RoundedCornerShape(16.dp)
             ) {
-                Text(text = SIGN_UP)
+                Text(text = SIGN_UP, fontSize = 14.sp)
             }
             Spacer(modifier = Modifier.height(20.dp))
             OAuthButton(
@@ -120,9 +127,9 @@ fun RegisterScreen() {
                     .align(Alignment.CenterHorizontally)
                     .clickable {
                         Log.d("TAG", "RegisterScreen: ")
-                    }
+                    },
+                color = MaterialTheme.colorScheme.onSurface
             )
-
         }
     }
 
