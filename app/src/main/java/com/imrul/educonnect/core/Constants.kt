@@ -11,5 +11,6 @@ class Constants {
         const val SIGN_IN = "Sign In"
         const val SIGN_UP = "Sign Up"
         const val SIGN_UP_WITH = "Sign Up with"
+        const val SIGN_IN_WITH = "Sign In with"
     }
 }

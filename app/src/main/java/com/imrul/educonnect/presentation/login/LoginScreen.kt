@@ -1,4 +1,4 @@
-package com.imrul.educonnect.presentation.register
+package com.imrul.educonnect.presentation.login
 
 import android.util.Log
 import androidx.compose.foundation.background
@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -26,32 +25,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.imrul.educonnect.R
-import com.imrul.educonnect.core.Constants.Companion.ALREADY_HAVE_AN_ACCOUNT
-import com.imrul.educonnect.core.Constants.Companion.CONFIRM_PASSWORD_PLACEHOLDER
-import com.imrul.educonnect.core.Constants.Companion.EMAIL_PLACEHOLDER
-import com.imrul.educonnect.core.Constants.Companion.PASSWORD_PLACEHOLDER
-import com.imrul.educonnect.core.Constants.Companion.SIGN_IN
-import com.imrul.educonnect.core.Constants.Companion.SIGN_UP
-import com.imrul.educonnect.core.Constants.Companion.SIGN_UP_WITH
-import com.imrul.educonnect.core.Constants.Companion.USERNAME_PLACEHOLDER
+import com.imrul.educonnect.core.Constants
+import com.imrul.educonnect.core.Routes.Companion.REGISTER_SCREEN_ROUTE
 import com.imrul.educonnect.presentation.components.OAuthButton
 
-
 @Composable
-fun RegisterScreen(navController: NavController) {
-    var username by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
+fun LoginScreen(navController: NavController) {
+    var email by remember {
+        mutableStateOf("")
+    }
+    var password by remember {
+        mutableStateOf("")
+    }
     val annotatedString = buildAnnotatedString {
-        append(ALREADY_HAVE_AN_ACCOUNT)
+        append(Constants.DONT_HAVE_AN_ACCOUNT)
         pushStyle(SpanStyle(fontWeight = FontWeight.Bold))
-        append(SIGN_IN)
+        append(Constants.SIGN_UP)
         pop()
     }
     Box(
@@ -66,21 +59,12 @@ fun RegisterScreen(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-
-            OutlinedTextField(
-                value = username,
-                onValueChange = { username = it },
-                singleLine = true,
-                label = { Text(USERNAME_PLACEHOLDER) },
-                shape = RoundedCornerShape(16.dp),
-            )
-            Spacer(modifier = Modifier.height(20.dp))
             OutlinedTextField(
                 shape = RoundedCornerShape(16.dp),
                 singleLine = true,
                 value = email,
                 onValueChange = { email = it },
-                label = { Text(EMAIL_PLACEHOLDER) },
+                label = { Text(Constants.EMAIL_PLACEHOLDER) },
             )
             Spacer(modifier = Modifier.height(20.dp))
             OutlinedTextField(
@@ -88,27 +72,19 @@ fun RegisterScreen(navController: NavController) {
                 singleLine = true,
                 value = password,
                 onValueChange = { password = it },
-                label = { Text(PASSWORD_PLACEHOLDER) }
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-            OutlinedTextField(
-                shape = RoundedCornerShape(16.dp),
-                singleLine = true,
-                value = confirmPassword,
-                onValueChange = { confirmPassword = it },
-                label = { Text(CONFIRM_PASSWORD_PLACEHOLDER) }
+                label = { Text(Constants.PASSWORD_PLACEHOLDER) }
             )
             Spacer(modifier = Modifier.height(20.dp))
             Button(
                 onClick = { /*TODO*/ },
                 shape = RoundedCornerShape(16.dp)
             ) {
-                Text(text = SIGN_UP, fontSize = 14.sp)
+                Text(text = Constants.SIGN_IN, fontSize = 14.sp)
             }
             Spacer(modifier = Modifier.height(20.dp))
             OAuthButton(
                 iconDrawableId = R.drawable.google_logo,
-                text = SIGN_UP_WITH,
+                text = Constants.SIGN_IN_WITH,
                 onClick = {}
             )
             Spacer(modifier = Modifier.height(20.dp))
@@ -117,7 +93,7 @@ fun RegisterScreen(navController: NavController) {
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .clickable {
-                        navController.popBackStack()
+                        navController.navigate(REGISTER_SCREEN_ROUTE)
                     },
                 color = MaterialTheme.colorScheme.onSurface
             )
