@@ -13,6 +13,7 @@ class Constants {
         const val SIGN_UP_WITH = "Sign Up with"
         const val SIGN_IN_WITH = "Sign In with"
         const val USERS_COLLECTION = "users"
+        const val USERNAME_REGEX = "^[A-Za-z][A-Za-z0-9_]{5,12}$"
 
     }
 }

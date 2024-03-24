@@ -5,6 +5,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.imrul.educonnect.data.network.AuthenticationDataSourceImplementation
 import com.imrul.educonnect.data.repository.AuthenticationRepoImplementation
 import com.imrul.educonnect.domain.repository.AuthenticationRepository
+import com.imrul.educonnect.domain.user_cases.RegisterUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,4 +29,8 @@ object AppModule {
     fun provideAuthRepository(
         dataSource: AuthenticationDataSourceImplementation
     ): AuthenticationRepository = AuthenticationRepoImplementation(dataSource)
+
+    @Provides
+    @Singleton
+    fun provideRegisterUseCase(repository: AuthenticationRepository) = RegisterUseCase(repository)
 }
