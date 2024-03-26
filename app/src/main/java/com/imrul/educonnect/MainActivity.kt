@@ -13,8 +13,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             EduConnectTheme {
-
-//                RegisterScreen()
                 NavGraph()
             }
         }

@@ -26,7 +26,7 @@ private val DarkColorScheme = darkColorScheme(
     onBackground = Color(0xFFFFFFFF),
     onSurface = Color(0xFFFFFFFF),
 
-)
+    )
 
 private val LightColorScheme = lightColorScheme(
     primary = Color(0xff6a0032),
@@ -51,7 +51,7 @@ fun EduConnectTheme(
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
-            if (darkTheme) darkColorScheme() else lightColorScheme()
+            if (darkTheme) lightColorScheme() else lightColorScheme()
         }
 
         darkTheme -> DarkColorScheme
@@ -61,7 +61,7 @@ fun EduConnectTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
+            window.statusBarColor = Maroon80.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }

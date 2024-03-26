@@ -1,6 +1,5 @@
 package com.imrul.educonnect.presentation.register
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,9 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -40,6 +37,11 @@ import com.imrul.educonnect.core.Constants.Companion.SIGN_UP
 import com.imrul.educonnect.core.Constants.Companion.SIGN_UP_WITH
 import com.imrul.educonnect.core.Constants.Companion.USERNAME_PLACEHOLDER
 import com.imrul.educonnect.presentation.components.OAuthButton
+import com.imrul.educonnect.presentation.components.PasswordTextField
+import com.imrul.educonnect.presentation.components.RegularTextField
+import com.imrul.educonnect.ui.theme.Maroon10
+import com.imrul.educonnect.ui.theme.Maroon70
+import com.imrul.educonnect.ui.theme.Maroon80
 
 
 @Composable
@@ -48,6 +50,9 @@ fun RegisterScreen(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    var passwordVisibility by remember {
+        mutableStateOf(false)
+    }
     val annotatedString = buildAnnotatedString {
         append(ALREADY_HAVE_AN_ACCOUNT)
         pushStyle(SpanStyle(fontWeight = FontWeight.Bold))
@@ -57,7 +62,7 @@ fun RegisterScreen(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = MaterialTheme.colorScheme.background) // Set the background color here
+            .background(color = Maroon10) // Set the background color here
     ) {
         Column(
             modifier = Modifier
@@ -66,42 +71,38 @@ fun RegisterScreen(navController: NavController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-
-            OutlinedTextField(
-                value = username,
+            RegularTextField(
+                text = username,
                 onValueChange = { username = it },
-                singleLine = true,
-                label = { Text(USERNAME_PLACEHOLDER) },
-                shape = RoundedCornerShape(16.dp),
+                label = USERNAME_PLACEHOLDER
             )
             Spacer(modifier = Modifier.height(20.dp))
-            OutlinedTextField(
-                shape = RoundedCornerShape(16.dp),
-                singleLine = true,
-                value = email,
+            RegularTextField(
+                text = email,
                 onValueChange = { email = it },
-                label = { Text(EMAIL_PLACEHOLDER) },
+                label = EMAIL_PLACEHOLDER
             )
             Spacer(modifier = Modifier.height(20.dp))
-            OutlinedTextField(
-                shape = RoundedCornerShape(16.dp),
-                singleLine = true,
-                value = password,
-                onValueChange = { password = it },
-                label = { Text(PASSWORD_PLACEHOLDER) }
+            PasswordTextField(
+                password = password,
+                passwordVisibility = passwordVisibility,
+                onPasswordChange = { password = it },
+                onPasswordVisibilityChange = { passwordVisibility = it },
+                PASSWORD_PLACEHOLDER
             )
             Spacer(modifier = Modifier.height(20.dp))
-            OutlinedTextField(
-                shape = RoundedCornerShape(16.dp),
-                singleLine = true,
-                value = confirmPassword,
-                onValueChange = { confirmPassword = it },
-                label = { Text(CONFIRM_PASSWORD_PLACEHOLDER) }
+            PasswordTextField(
+                password = confirmPassword,
+                passwordVisibility = passwordVisibility,
+                onPasswordChange = { confirmPassword = it },
+                onPasswordVisibilityChange = { passwordVisibility = it },
+                CONFIRM_PASSWORD_PLACEHOLDER
             )
             Spacer(modifier = Modifier.height(20.dp))
             Button(
                 onClick = { /*TODO*/ },
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(16.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Maroon80)
             ) {
                 Text(text = SIGN_UP, fontSize = 14.sp)
             }
@@ -119,7 +120,7 @@ fun RegisterScreen(navController: NavController) {
                     .clickable {
                         navController.popBackStack()
                     },
-                color = MaterialTheme.colorScheme.onSurface
+                color = Maroon70
             )
         }
     }

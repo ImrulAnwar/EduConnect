@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.imrul.educonnect.ui.theme.Maroon70
 
 @Composable
 fun OAuthButton(
@@ -29,9 +30,9 @@ fun OAuthButton(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White,
-            contentColor = Color.Black // theme lagaite gele eita change korbo
+            contentColor = Maroon70 // theme lagaite gele eita change korbo
         ),
-        border = BorderStroke(width = 1.dp, color = Color.Black)  // theme lagaite gele eita change korbo
+        border = BorderStroke(width = 0.dp, color = Color.Transparent)  // theme lagaite gele eita change korbo
     ) {
         Row(
             modifier = Modifier.padding(6.dp),
