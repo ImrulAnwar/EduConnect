@@ -9,6 +9,7 @@ class Constants {
         const val ALREADY_HAVE_AN_ACCOUNT = "Already have an account? "
         const val DONT_HAVE_AN_ACCOUNT = "Don't have an account? "
         const val SIGN_IN = "Sign In"
+        const val SIGN_OUT = "Sign Out"
         const val SIGN_UP = "Sign Up"
         const val SIGN_UP_WITH = "Sign Up with"
         const val SIGN_IN_WITH = "Sign In with"

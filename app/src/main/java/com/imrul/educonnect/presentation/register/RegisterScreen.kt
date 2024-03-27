@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,6 +25,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.imrul.educonnect.R
 import com.imrul.educonnect.core.Constants.Companion.ALREADY_HAVE_AN_ACCOUNT
@@ -45,14 +45,15 @@ import com.imrul.educonnect.ui.theme.Maroon80
 
 
 @Composable
-fun RegisterScreen(navController: NavController) {
-    var username by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-    var passwordVisibility by remember {
-        mutableStateOf(false)
-    }
+fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel = hiltViewModel()) {
+    val usernameText = viewModel.usernameText
+    val emailText = viewModel.emailText
+    val passwordText = viewModel.passwordText
+    val confirmPasswordText = viewModel.confirmPasswordText
+
+    var passwordVisibility by remember { mutableStateOf(false) }
+
+    // to make the last part bold
     val annotatedString = buildAnnotatedString {
         append(ALREADY_HAVE_AN_ACCOUNT)
         pushStyle(SpanStyle(fontWeight = FontWeight.Bold))
@@ -72,35 +73,35 @@ fun RegisterScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             RegularTextField(
-                text = username,
-                onValueChange = { username = it },
+                text = usernameText,
+                onValueChange = { viewModel.onUsernameChanged(it) },
                 label = USERNAME_PLACEHOLDER
             )
             Spacer(modifier = Modifier.height(20.dp))
             RegularTextField(
-                text = email,
-                onValueChange = { email = it },
+                text = emailText,
+                onValueChange = { viewModel.onEmailChanged(it) },
                 label = EMAIL_PLACEHOLDER
             )
             Spacer(modifier = Modifier.height(20.dp))
             PasswordTextField(
-                password = password,
+                password = passwordText,
                 passwordVisibility = passwordVisibility,
-                onPasswordChange = { password = it },
+                onPasswordChange = { viewModel.onPasswordChanged(it) },
                 onPasswordVisibilityChange = { passwordVisibility = it },
                 PASSWORD_PLACEHOLDER
             )
             Spacer(modifier = Modifier.height(20.dp))
             PasswordTextField(
-                password = confirmPassword,
+                password = confirmPasswordText,
                 passwordVisibility = passwordVisibility,
-                onPasswordChange = { confirmPassword = it },
+                onPasswordChange = { viewModel.onConfirmPasswordChanged(it) },
                 onPasswordVisibilityChange = { passwordVisibility = it },
                 CONFIRM_PASSWORD_PLACEHOLDER
             )
             Spacer(modifier = Modifier.height(20.dp))
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { viewModel.registerUser() },
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Maroon80)
             ) {

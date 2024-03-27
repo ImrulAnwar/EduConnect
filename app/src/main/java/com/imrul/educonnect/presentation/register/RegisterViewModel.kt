@@ -63,6 +63,9 @@ class RegisterViewModel @Inject constructor(
             true
         }
 
+    fun doesConfirmPasswordMatch() = confirmPasswordText == passwordText
+
+
     fun checkValidation(): Boolean =
         usernameRegex.toRegex().matches(usernameText) && Patterns.EMAIL_ADDRESS.matcher(emailText)
             .matches() && passwordText.length > 5
@@ -82,6 +85,9 @@ class RegisterViewModel @Inject constructor(
 
     fun onPasswordChanged(value: String) {
         passwordText = value
+    }
+    fun onConfirmPasswordChanged(value: String) {
+        confirmPasswordText = value
     }
 
     fun onUsernameChanged(value: String) {

@@ -39,19 +39,19 @@ class AuthenticationDataSourceImplementation(
             uid = this?.uid
         )
     }
-    private suspend fun createUserForFirestore(username: String, uid: String?) =
-        hashMapOf(
-            "uid" to uid,
-            "displayName" to username
-        ).let {
-            uid?.let {
-                fireStore
-                    .collection(USERS_COLLECTION)
-                    .document(uid)
-                    .set(it)
-                    .await()
-            }
+    private suspend fun createUserForFirestore(username: String, uid: String?) {
+        uid?.let {
+            val data = hashMapOf(
+                "uid" to uid,
+                "displayName" to username
+            )
+            fireStore
+                .collection(USERS_COLLECTION)
+                .document(uid)
+                .set(data)
+                .await()
         }
+    }
 
     // Get user data with Firestore users collection
     override suspend fun getUser(uid: String?): User? =

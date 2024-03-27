@@ -16,9 +16,9 @@ class UserStateUseCase @Inject constructor(
         try {
             emit(Resource.Loading())
             when (val user = repository.currentUser()) {
-                null -> {
-                    emit(Resource.Success(null))
-                }
+//                null -> {
+//                    emit(Resource.Success(null))
+//                }
                 else -> {
                     emit(Resource.Success(user))
                 }

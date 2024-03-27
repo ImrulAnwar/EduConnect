@@ -1,5 +1,6 @@
 package com.imrul.educonnect.presentation.login
 
+import android.util.Log
 import android.util.Patterns
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -113,6 +114,7 @@ class LoginViewModel @Inject constructor(
             when (result) {
                 is Resource.Success -> {
                     _loginState.value = LoginState(user = result.data).also {
+                        postError()
                         clearActions()
                     }
                 }
@@ -126,8 +128,12 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun postError() {
+        Log.d("problem check", "loginUser: ${_loginState.value}")
+    }
+
     // Check user last state for UI
-    fun controlUser() = viewModelScope.launch {
+    fun currentUser() = viewModelScope.launch {
         loginStateUseCase().collect { result ->
             when (result) {
                 is Resource.Success -> {

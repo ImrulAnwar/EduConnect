@@ -9,17 +9,17 @@ import com.imrul.educonnect.core.Routes.Companion.LOGIN_SCREEN_ROUTE
 import com.imrul.educonnect.core.Routes.Companion.REGISTER_SCREEN_ROUTE
 import com.imrul.educonnect.presentation.home.HomeScreen
 import com.imrul.educonnect.presentation.login.LoginScreen
+import com.imrul.educonnect.presentation.login.model.LoginState
 import com.imrul.educonnect.presentation.register.RegisterScreen
 
 @Composable
 fun NavGraph(
-//    userState: LoginState?,
+    userState: LoginState?,
 ) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-//        startDestination = if (userState?.user != null) HOME_SCREEN_ROUTE else LOGIN_SCREEN_ROUTE
-        startDestination = LOGIN_SCREEN_ROUTE
+        startDestination = if (userState?.user != null) HOME_SCREEN_ROUTE else LOGIN_SCREEN_ROUTE
     ) {
         composable(
             route = LOGIN_SCREEN_ROUTE
@@ -33,7 +33,7 @@ fun NavGraph(
         }
         composable(
             route = HOME_SCREEN_ROUTE
-        ){
+        ) {
             HomeScreen(navController = navController)
         }
     }
