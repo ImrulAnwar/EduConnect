@@ -60,7 +60,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
         pop()
     }
 
-    val loginState = viewModel.loginState.value
+    val loginState by viewModel.loginState
     val context = LocalContext.current
     val userState = viewModel.userState
 
