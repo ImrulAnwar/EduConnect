@@ -14,12 +14,12 @@ import com.imrul.educonnect.presentation.register.RegisterScreen
 
 @Composable
 fun NavGraph(
-    userState: LoginState?,
+    loginState: LoginState?,
 ) {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = if (userState?.user != null) HOME_SCREEN_ROUTE else LOGIN_SCREEN_ROUTE
+        startDestination = if (loginState?.user != null) HOME_SCREEN_ROUTE else LOGIN_SCREEN_ROUTE
     ) {
         composable(
             route = LOGIN_SCREEN_ROUTE

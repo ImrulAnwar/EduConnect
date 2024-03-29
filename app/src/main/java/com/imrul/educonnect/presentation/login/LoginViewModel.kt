@@ -2,6 +2,7 @@ package com.imrul.educonnect.presentation.login
 
 import android.util.Log
 import android.util.Patterns
+import android.widget.Toast
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -10,7 +11,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.imrul.educonnect.MainActivity
 import com.imrul.educonnect.core.Resource
+import com.imrul.educonnect.core.Routes.Companion.LOGIN_SCREEN_ROUTE
 import com.imrul.educonnect.domain.model.User
 import com.imrul.educonnect.domain.network.ConnectivityObserver
 import com.imrul.educonnect.domain.user_cases.GetUserUseCase
@@ -38,7 +44,7 @@ class LoginViewModel @Inject constructor(
     // Get info on user, users
 //    private val getUsersUseCase: GetUsersUseCase,
     private val getUserUseCase: GetUserUseCase
-):ViewModel(){
+) : ViewModel() {
     var emailText by mutableStateOf("")
         private set
 
@@ -51,7 +57,7 @@ class LoginViewModel @Inject constructor(
 
     // User State for get last user data
     private val _userState = MutableStateFlow(UserState())
-    val userState = _userState.asStateFlow()
+    val userState = _userState
 
     // Get User Detail Data with Mutable State List
     private var _usersState = mutableStateListOf<User?>()
@@ -108,26 +114,6 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    // Login use case control to the login state
-    fun loginUser() = viewModelScope.launch {
-        signInUseCase(emailText, passwordText).collect { result ->
-            when (result) {
-                is Resource.Success -> {
-                    _loginState.value = LoginState(user = result.data).also {
-                        postError()
-                        clearActions()
-                    }
-                }
-                is Resource.Error -> {
-                    _loginState.value = LoginState(error = result.message.toString())
-                }
-                is Resource.Loading -> {
-                    _loginState.value = LoginState(isLoading = true)
-                }
-            }
-        }
-    }
-
     fun postError() {
         Log.d("problem check", "loginUser: ${_loginState.value}")
     }
@@ -138,10 +124,13 @@ class LoginViewModel @Inject constructor(
             when (result) {
                 is Resource.Success -> {
                     _loginState.value = LoginState(user = result.data)
+
                 }
+
                 is Resource.Error -> {
                     _loginState.value = LoginState(error = result.message.toString())
                 }
+
                 is Resource.Loading -> {
                     // Is loading for Splash Screen
                     _isLoading.value = false
@@ -155,11 +144,14 @@ class LoginViewModel @Inject constructor(
         signOutUseCase().collect { result ->
             when (result) {
                 is Resource.Success -> {
+                    postError()
                     _loginState.value = LoginState(user = null)
                 }
+
                 is Resource.Error -> {
                     _loginState.value = LoginState(error = result.message.toString())
                 }
+
                 is Resource.Loading -> {
                     _loginState.value = LoginState(isLoading = true)
                 }
@@ -167,24 +159,24 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-//    fun getUsers(uid: String? = _loginState.value.user?.uid) =
-//        getUsersUseCase(uid).onEach { result ->
-//            when (result) {
-//                is Resource.Success -> {
-//                    result.data?.let { list ->
-//                        list.forEach { user ->
-//                            _usersState.add(user)
-//                        }
-//                    }
-//                }
-//                is Resource.Error -> {
-//                    _userState.value = UserState(error = result.message.toString())
-//                }
-//                is Resource.Loading -> {
-//                    _userState.value = UserState(isLoading = true)
-//                }
-//            }
-//        }.launchIn(viewModelScope)
+    // Login use case control to the login state
+    fun loginUser() = viewModelScope.launch {
+        signInUseCase(emailText, passwordText).collect { result ->
+            when (result) {
+                is Resource.Success -> {
+                    _loginState.value = LoginState(user = result.data)
+                }
+
+                is Resource.Error -> {
+                    _loginState.value = LoginState(error = result.message.toString())
+                }
+
+                is Resource.Loading -> {
+                    _loginState.value = LoginState(isLoading = true)
+                }
+            }
+        }
+    }
 
     fun getUser(uid: String? = _loginState.value.user?.uid) =
         getUserUseCase(uid).onEach { result ->
@@ -192,13 +184,17 @@ class LoginViewModel @Inject constructor(
                 is Resource.Success -> {
                     _userState.value = UserState(user = result.data)
                 }
+
                 is Resource.Error -> {
                     _userState.value = UserState(error = result.data.toString())
                 }
+
                 is Resource.Loading -> {
                     _userState.value = UserState(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)
-
+    fun navigateToLoginScreen(navController: NavHostController) {
+        navController.navigate(LOGIN_SCREEN_ROUTE)
+    }
 }

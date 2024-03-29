@@ -36,6 +36,7 @@ import com.imrul.educonnect.R
 import com.imrul.educonnect.core.Constants
 import com.imrul.educonnect.core.Constants.Companion.EMAIL_PLACEHOLDER
 import com.imrul.educonnect.core.Routes.Companion.HOME_SCREEN_ROUTE
+import com.imrul.educonnect.core.Routes.Companion.LOGIN_SCREEN_ROUTE
 import com.imrul.educonnect.core.Routes.Companion.REGISTER_SCREEN_ROUTE
 import com.imrul.educonnect.presentation.components.OAuthButton
 import com.imrul.educonnect.presentation.components.PasswordTextField
@@ -106,34 +107,17 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
             Button(
                 onClick = {
                     viewModel.loginUser()
-                    Log.d(
-                        "problem check",
-//                        "onCreate: ${FirebaseAuth.getInstance().currentUser}"
-                        "${loginState.user}"
-                    )
                 },
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Maroon80)
             ) {
                 Text(text = Constants.SIGN_IN, fontSize = 14.sp)
             }
-            Button(
-                onClick = { viewModel.signOut() },
-                shape = RoundedCornerShape(16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Maroon80)
-            ) {
-                Text(text = Constants.SIGN_OUT, fontSize = 14.sp)
-            }
             Spacer(modifier = Modifier.height(20.dp))
             OAuthButton(
                 iconDrawableId = R.drawable.google_logo,
                 text = Constants.SIGN_IN_WITH,
                 onClick = {
-                    Log.d(
-                        "problem check",
-//                        "onCreate: ${FirebaseAuth.getInstance().currentUser}"
-                        "${loginState.user}"
-                    )
                 }
             )
             Spacer(modifier = Modifier.height(20.dp))
