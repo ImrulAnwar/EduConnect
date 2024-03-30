@@ -1,5 +1,6 @@
 package com.imrul.educonnect.presentation.home
 
+import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,12 +14,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseAuth
 import com.imrul.educonnect.core.Constants
 import com.imrul.educonnect.core.Routes
 import com.imrul.educonnect.core.Routes.Companion.LOGIN_SCREEN_ROUTE
 import com.imrul.educonnect.presentation.login.LoginViewModel
 import com.imrul.educonnect.ui.theme.Maroon80
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun HomeScreen(
     navController: NavController,
@@ -33,7 +36,9 @@ fun HomeScreen(
         userState.user?.let { user ->
             viewModel.getUser(user.uid)
         }
+        viewModel.currentUser()
     }
+    val auth = FirebaseAuth.getInstance().currentUser
     Column {
 
         Button(
@@ -46,6 +51,6 @@ fun HomeScreen(
         ) {
             Text(text = Constants.SIGN_OUT, fontSize = 14.sp)
         }
-        Text(userState.user?.uid.toString())
+        Text(auth?.uid.toString())
     }
 }
