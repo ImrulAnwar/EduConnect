@@ -1,6 +1,5 @@
 package com.imrul.educonnect.presentation.login
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,6 +16,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.google.firebase.auth.FirebaseAuth
 import com.imrul.educonnect.R
 import com.imrul.educonnect.core.Constants
 import com.imrul.educonnect.core.Constants.Companion.EMAIL_PLACEHOLDER
@@ -61,10 +60,9 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
         pop()
     }
 
-    val loginState by viewModel.loginState
+    val loginState by viewModel.loginState.collectAsState()
     val context = LocalContext.current
-    val userState = viewModel.userState
-
+    val userState by viewModel.userState.collectAsState()
     // what is it doing?
 
     LaunchedEffect(loginState) {

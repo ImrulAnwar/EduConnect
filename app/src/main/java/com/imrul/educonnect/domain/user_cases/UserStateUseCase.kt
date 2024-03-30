@@ -15,18 +15,14 @@ class UserStateUseCase @Inject constructor(
     operator fun invoke(): Flow<Resource<FirebaseUser?>> = flow {
         try {
             emit(Resource.Loading())
-            when (val user = repository.currentUser()) {
-                null -> {
-                    emit(Resource.Success(null))
-                }
-                else -> {
-                    emit(Resource.Success(user))
-                }
-            }
+            val user = repository.currentUser()
+            emit(Resource.Success(user))
         } catch (e: FirebaseAuthException) {
             emit(Resource.Error(e.message.toString()))
         } catch (e: FirebaseNetworkException) {
             emit(Resource.Error(message = e.message.toString()))
+        } catch (e: Exception) {
+            emit(Resource.Error("An unexpected error occurred"))
         }
     }
 }

@@ -9,14 +9,14 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.google.firebase.auth.FirebaseAuth
 import com.imrul.educonnect.core.Constants
-import com.imrul.educonnect.core.Routes
 import com.imrul.educonnect.core.Routes.Companion.LOGIN_SCREEN_ROUTE
 import com.imrul.educonnect.presentation.login.LoginViewModel
 import com.imrul.educonnect.ui.theme.Maroon80
@@ -28,29 +28,21 @@ fun HomeScreen(
     viewModel: LoginViewModel = hiltViewModel()
 ) {
 
-    val loginState = viewModel.loginState.value
-    val userState = viewModel.userState.value
-    val context = LocalContext.current
+    val loginState by viewModel.loginState.collectAsState()
 
-    LaunchedEffect(userState) {
-        userState.user?.let { user ->
-            viewModel.getUser(user.uid)
-        }
+    LaunchedEffect(loginState) {
         viewModel.currentUser()
     }
-    val auth = FirebaseAuth.getInstance().currentUser
     Column {
-
         Button(
             onClick = {
-                viewModel.signOut()
-                if (loginState.user == null) navController.navigate(LOGIN_SCREEN_ROUTE)
+                viewModel.signOut(navController)
             },
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(containerColor = Maroon80)
         ) {
             Text(text = Constants.SIGN_OUT, fontSize = 14.sp)
         }
-        Text(auth?.uid.toString())
+        Text(loginState.user?.displayName.toString())
     }
 }
