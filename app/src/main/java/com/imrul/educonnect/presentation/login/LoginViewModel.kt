@@ -12,7 +12,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.imrul.educonnect.core.Resource
-import com.imrul.educonnect.core.Routes.Companion.HOME_SCREEN_ROUTE
 import com.imrul.educonnect.core.Routes.Companion.LOGIN_SCREEN_ROUTE
 import com.imrul.educonnect.domain.model.User
 import com.imrul.educonnect.domain.network.ConnectivityObserver

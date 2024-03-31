@@ -34,8 +34,7 @@ import androidx.navigation.NavController
 import com.imrul.educonnect.R
 import com.imrul.educonnect.core.Constants
 import com.imrul.educonnect.core.Constants.Companion.EMAIL_PLACEHOLDER
-import com.imrul.educonnect.core.Routes.Companion.HOME_SCREEN_ROUTE
-import com.imrul.educonnect.core.Routes.Companion.LOGIN_SCREEN_ROUTE
+import com.imrul.educonnect.core.Routes.Companion.COURSES_SCREEN_ROUTE
 import com.imrul.educonnect.core.Routes.Companion.REGISTER_SCREEN_ROUTE
 import com.imrul.educonnect.presentation.components.OAuthButton
 import com.imrul.educonnect.presentation.components.PasswordTextField
@@ -66,7 +65,7 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
     // what is it doing?
 
     LaunchedEffect(loginState) {
-        if (loginState.user != null) navController.navigate(HOME_SCREEN_ROUTE)
+        if (loginState.user != null) navController.navigate(COURSES_SCREEN_ROUTE)
         loginState.error?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         }
