@@ -58,6 +58,7 @@ class MainActivity : ComponentActivity() {
                     screens[1].title,
                     screens[2].title,
                     -> true
+
                     else -> false
                 }
 
@@ -70,6 +71,7 @@ class MainActivity : ComponentActivity() {
                                         selected = selectedItemIndex == index,
                                         onClick = {
                                             selectedItemIndex = index
+                                            navController.popBackStack()
                                             navController.navigate(item.title)
                                         },
                                         label = { Text(text = item.title) },
