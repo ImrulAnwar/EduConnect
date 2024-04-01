@@ -65,7 +65,11 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
     // what is it doing?
 
     LaunchedEffect(loginState) {
-        if (loginState.user != null) navController.navigate(COURSES_SCREEN_ROUTE)
+        viewModel.currentUser()
+        if (loginState.user != null) {
+            navController.popBackStack()
+            navController.navigate(COURSES_SCREEN_ROUTE)
+        }
         loginState.error?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         }

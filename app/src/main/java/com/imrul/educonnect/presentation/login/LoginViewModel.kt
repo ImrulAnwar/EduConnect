@@ -143,6 +143,7 @@ class LoginViewModel @Inject constructor(
                 is Resource.Success -> {
                     postError()
                     _loginState.value = LoginState(user = null)
+                    navController.popBackStack()
                     navController.navigate(LOGIN_SCREEN_ROUTE)
                 }
 
