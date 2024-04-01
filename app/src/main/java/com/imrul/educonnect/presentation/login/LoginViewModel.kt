@@ -152,6 +152,7 @@ class LoginViewModel @Inject constructor(
 
             when (result) {
                 is Resource.Success -> {
+                    // why not working?
                     setSelectedItem(0)
                     _loginState.value = LoginState(user = null)
                     navController.popBackStack()

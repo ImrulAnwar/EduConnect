@@ -7,8 +7,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.imrul.educonnect.core.Constants.Companion.USERNAME_REGEX
 import com.imrul.educonnect.core.Resource
+import com.imrul.educonnect.core.Routes.Companion.LOGIN_SCREEN_ROUTE
 import com.imrul.educonnect.domain.user_cases.RegisterUseCase
 import com.imrul.educonnect.presentation.register.model.RegisterState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -73,9 +76,10 @@ class RegisterViewModel @Inject constructor(
     private fun clearActions() {
         RegisterState(user = null)
         // Form Fields
-        usernameText = mutableStateOf("").toString()
-        emailText = mutableStateOf("").toString()
-        passwordText = mutableStateOf("").toString()
+        usernameText = ""
+        emailText = ""
+        passwordText = ""
+        confirmPasswordText = ""
     }
 
     // need to see how does this work
@@ -86,6 +90,7 @@ class RegisterViewModel @Inject constructor(
     fun onPasswordChanged(value: String) {
         passwordText = value
     }
+
     fun onConfirmPasswordChanged(value: String) {
         confirmPasswordText = value
     }
@@ -95,17 +100,21 @@ class RegisterViewModel @Inject constructor(
     }
 
     // Register use case for the registering and control to the registering state
-    fun registerUser() = viewModelScope.launch {
+    fun registerUser(navController: NavHostController) = viewModelScope.launch {
         registerUseCase(usernameText, emailText, passwordText).collect { result ->
             when (result) {
                 is Resource.Success -> {
                     _state.value = RegisterState(user = result.data).also {
                         clearActions()
+                        navController.popBackStack()
+                        navController.navigate(LOGIN_SCREEN_ROUTE)
                     }
                 }
+
                 is Resource.Error -> {
                     _state.value = RegisterState(error = result.message.toString())
                 }
+
                 is Resource.Loading -> {
                     _state.value = RegisterState(isLoading = true)
                 }
