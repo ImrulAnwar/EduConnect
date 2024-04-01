@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.google.android.gms.tasks.Tasks.await
 import com.imrul.educonnect.core.Resource
 import com.imrul.educonnect.core.Routes.Companion.LOGIN_SCREEN_ROUTE
 import com.imrul.educonnect.domain.model.User
@@ -22,7 +23,9 @@ import com.imrul.educonnect.domain.user_cases.UserStateUseCase
 import com.imrul.educonnect.presentation.login.model.LoginState
 import com.imrul.educonnect.presentation.login.model.UserState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -41,6 +44,10 @@ class LoginViewModel @Inject constructor(
 //    private val getUsersUseCase: GetUsersUseCase,
     private val getUserUseCase: GetUserUseCase
 ) : ViewModel() {
+    private val _selectedItemIndex = MutableStateFlow(0)
+
+    // Expose selectedItemIndex as StateFlow
+    val selectedItemIndex: StateFlow<Int> = _selectedItemIndex.asStateFlow()
     var emailText by mutableStateOf("")
         private set
 
@@ -53,7 +60,7 @@ class LoginViewModel @Inject constructor(
 
     // User State for get last user data
     private val _userState = MutableStateFlow(UserState())
-    val userState =_userState.asStateFlow()
+    val userState = _userState.asStateFlow()
 
     // Get User Detail Data with Mutable State List
     private var _usersState = mutableStateListOf<User?>()
@@ -124,10 +131,12 @@ class LoginViewModel @Inject constructor(
                     _loginState.value = LoginState(user = result.data)
                     _isLoading.value = false // Reset loading state when data is loaded
                 }
+
                 is Resource.Error -> {
                     _loginState.value = LoginState(error = result.message.toString())
                     _isLoading.value = false // Reset loading state in case of error
                 }
+
                 is Resource.Loading -> {
                     _isLoading.value = true // Set loading state when data is being fetched
                 }
@@ -138,10 +147,12 @@ class LoginViewModel @Inject constructor(
 
     // Sign out to the clear user memory
     fun signOut(navController: NavController) = viewModelScope.launch {
+        _selectedItemIndex.value = 0
         signOutUseCase().collect { result ->
+
             when (result) {
                 is Resource.Success -> {
-                    postError()
+                    setSelectedItem(0)
                     _loginState.value = LoginState(user = null)
                     navController.popBackStack()
                     navController.navigate(LOGIN_SCREEN_ROUTE)
@@ -165,9 +176,11 @@ class LoginViewModel @Inject constructor(
                 is Resource.Success -> {
                     _loginState.value = LoginState(user = result.data)
                 }
+
                 is Resource.Error -> {
                     _loginState.value = LoginState(error = result.message.toString())
                 }
+
                 is Resource.Loading -> {
                     _loginState.value = LoginState(isLoading = true)
                 }
@@ -181,12 +194,12 @@ class LoginViewModel @Inject constructor(
             when (result) {
                 is Resource.Success -> {
                     _userState.value = UserState(user = result.data)
-                    Log.d("problem check", "getUser: ${_userState.value}")
-                    Log.d("problem check", "getUser: ${userState.value}")
                 }
+
                 is Resource.Error -> {
                     _userState.value = UserState(error = result.data.toString())
                 }
+
                 is Resource.Loading -> {
                     _userState.value = UserState(isLoading = true)
                 }
@@ -194,8 +207,8 @@ class LoginViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun navigateToLoginScreen(navController: NavHostController) {
-        navController.navigate(LOGIN_SCREEN_ROUTE)
+    fun setSelectedItem(index: Int) {
+        _selectedItemIndex.value = index
     }
 
 

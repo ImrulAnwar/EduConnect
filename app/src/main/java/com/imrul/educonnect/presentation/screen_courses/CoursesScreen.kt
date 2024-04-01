@@ -40,25 +40,5 @@ fun CoursesScreen(
     viewModel: LoginViewModel = hiltViewModel()
 ) {
 
-    val loginState by viewModel.loginState.collectAsState()
-
-    LaunchedEffect(loginState) {
-        viewModel.currentUser()
-    }
-
-
-
-    Column {
-        Button(
-            onClick = {
-                viewModel.signOut(navController)
-            },
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Maroon80)
-        ) {
-            Text(text = Constants.SIGN_OUT, fontSize = 14.sp)
-        }
-        Text(loginState.user?.displayName.toString())
-    }
 
 }

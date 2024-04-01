@@ -11,6 +11,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
@@ -28,6 +29,9 @@ import com.imrul.educonnect.presentation.login.model.LoginState
 import com.imrul.educonnect.presentation.navigation.BottomBarScreens
 import com.imrul.educonnect.presentation.navigation.NavGraph
 import com.imrul.educonnect.ui.theme.EduConnectTheme
+import com.imrul.educonnect.ui.theme.Maroon10
+import com.imrul.educonnect.ui.theme.Maroon20
+import com.imrul.educonnect.ui.theme.Maroon70
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -40,9 +44,7 @@ class MainActivity : ComponentActivity() {
         viewModel.currentUser()
         setContent {
             val loginState by viewModel.loginState.collectAsState()
-            LaunchedEffect(loginState) {
-                viewModel.currentUser()
-            }
+
 
             EduConnectTheme {
                 val screens = listOf(
@@ -50,7 +52,7 @@ class MainActivity : ComponentActivity() {
                     BottomBarScreens.MessagesScreenObject,
                     BottomBarScreens.ProfileScreenObject
                 )
-                var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
+                val selectedItemIndex by viewModel.selectedItemIndex.collectAsState()
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val shouldShowBottomNavigation = when (navBackStackEntry?.destination?.route) {
@@ -62,15 +64,21 @@ class MainActivity : ComponentActivity() {
                     else -> false
                 }
 
+                LaunchedEffect(loginState, selectedItemIndex) {
+                    viewModel.currentUser()
+                }
+
                 Scaffold(
                     bottomBar = {
                         if (shouldShowBottomNavigation)
-                            NavigationBar {
+                            NavigationBar(
+                                containerColor = Maroon10
+                            ) {
                                 screens.forEachIndexed { index, item ->
                                     NavigationBarItem(
                                         selected = selectedItemIndex == index,
                                         onClick = {
-                                            selectedItemIndex = index
+                                            viewModel.setSelectedItem(index)
                                             navController.popBackStack()
                                             navController.navigate(item.title)
                                         },
@@ -87,14 +95,17 @@ class MainActivity : ComponentActivity() {
                                             ) {
                                                 Icon(
                                                     imageVector = if (index == selectedItemIndex) item.selectedIcon else item.unselectedIcon,
-                                                    contentDescription = item.title
+                                                    contentDescription = item.title,
+                                                    tint = if (index == selectedItemIndex) Maroon70 else Maroon20 // Set the desired color conditionally
                                                 )
                                             }
                                         }
                                     )
                                 }
                             }
-                    }
+                    },
+                    containerColor = Maroon10,
+                    contentColor = Maroon70
                 ) {
                     NavGraph(loginState, navController)
                 }
