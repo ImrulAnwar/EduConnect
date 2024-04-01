@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.imrul.educonnect.presentation.login.LoginViewModel
 import com.imrul.educonnect.presentation.login.model.LoginState
@@ -38,10 +39,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         viewModel.currentUser()
         setContent {
+            val loginState by viewModel.loginState.collectAsState()
             LaunchedEffect(loginState) {
                 viewModel.currentUser()
             }
-            val loginState by viewModel.loginState.collectAsState()
+
             EduConnectTheme {
                 val screens = listOf(
                     BottomBarScreens.CoursesScreenObject,
@@ -50,9 +52,18 @@ class MainActivity : ComponentActivity() {
                 )
                 var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
                 val navController = rememberNavController()
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val shouldShowBottomNavigation = when (navBackStackEntry?.destination?.route) {
+                    screens[0].title,
+                    screens[1].title,
+                    screens[2].title,
+                    -> true
+                    else -> false
+                }
 
                 Scaffold(
                     bottomBar = {
+                        if (shouldShowBottomNavigation && loginState.user != null)
                             NavigationBar {
                                 screens.forEachIndexed { index, item ->
                                     NavigationBarItem(
