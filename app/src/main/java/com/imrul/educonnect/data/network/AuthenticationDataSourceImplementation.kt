@@ -19,7 +19,7 @@ import kotlinx.coroutines.tasks.await
 class AuthenticationDataSourceImplementation(
     private val auth: FirebaseAuth,
     private val fireStore: FirebaseFirestore
-): AuthenticationDataSource {
+) : AuthenticationDataSource {
     override suspend fun signIn(email: String, password: String): FirebaseUser? =
         auth
             .signInWithEmailAndPassword(email, password)
@@ -31,19 +31,22 @@ class AuthenticationDataSourceImplementation(
         email: String,
         password: String
     ): FirebaseUser? = auth
-    .createUserWithEmailAndPassword(email, password)
-    .await()
-    .user.apply {
-        createUserForFirestore(
-            username = username,
-            uid = this?.uid
-        )
-    }
-    private suspend fun createUserForFirestore(username: String, uid: String?) {
+        .createUserWithEmailAndPassword(email, password)
+        .await()
+        .user.apply {
+            createUserForFirestore(
+                username = username,
+                uid = this?.uid,
+                email = email
+            )
+        }
+
+    private suspend fun createUserForFirestore(username: String, uid: String?, email: String?) {
         uid?.let {
             val data = hashMapOf(
                 "uid" to uid,
-                "displayName" to username
+                "displayName" to username,
+                "email" to email
             )
             fireStore
                 .collection(USERS_COLLECTION)

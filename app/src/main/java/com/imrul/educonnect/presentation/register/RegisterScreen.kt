@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.imrul.educonnect.R
 import com.imrul.educonnect.core.Constants.Companion.ALREADY_HAVE_AN_ACCOUNT
 import com.imrul.educonnect.core.Constants.Companion.CONFIRM_PASSWORD_PLACEHOLDER
@@ -45,7 +46,10 @@ import com.imrul.educonnect.ui.theme.Maroon80
 
 
 @Composable
-fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel = hiltViewModel()) {
+fun RegisterScreen(
+    navController: NavHostController,
+    viewModel: RegisterViewModel = hiltViewModel()
+) {
     val usernameText = viewModel.usernameText
     val emailText = viewModel.emailText
     val passwordText = viewModel.passwordText
@@ -101,7 +105,7 @@ fun RegisterScreen(navController: NavController, viewModel: RegisterViewModel = 
             )
             Spacer(modifier = Modifier.height(20.dp))
             Button(
-                onClick = { viewModel.registerUser() },
+                onClick = { viewModel.registerUser(navController = navController) },
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Maroon80)
             ) {
