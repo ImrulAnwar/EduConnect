@@ -1,7 +1,6 @@
 package com.imrul.educonnect.presentation.screen_send_message
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
@@ -23,7 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -36,6 +36,7 @@ import com.imrul.educonnect.core.Constants.Companion.MESSAGE_PLACEHOLDER
 import com.imrul.educonnect.presentation.components.CircularImage
 import com.imrul.educonnect.presentation.components.CustomIcon
 import com.imrul.educonnect.presentation.components.CustomText
+import com.imrul.educonnect.presentation.components.MessageComponent
 import com.imrul.educonnect.presentation.components.RegularTextField
 import com.imrul.educonnect.presentation.screen_login.LoginViewModel
 import com.imrul.educonnect.ui.theme.Maroon70
@@ -63,6 +64,14 @@ fun SendMessageScreen(
             sendMessageViewModel.getUser(it)
         }
     }
+
+    LaunchedEffect(loginState, textReceiverUserState) {
+        sendMessageViewModel.getMessages(
+            senderId = loginState.user?.uid,
+            receiverId = textReceiverUserState.user?.uid
+        )
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
@@ -94,9 +103,17 @@ fun SendMessageScreen(
                 onClick = {}
             )
         }
-
+        LazyColumn(
+            modifier = Modifier.weight(1f)
+        ) {
+            items(sendMessageViewModel.messagesState) { message ->
+                message.let {
+                    it?.message?.let { it1 -> MessageComponent(message = it1) }
+                }
+            }
+        }
         // bottom part
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.width(5.dp))
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -117,6 +134,7 @@ fun SendMessageScreen(
                 modifier = Modifier.weight(1f)
             )
             Spacer(modifier = Modifier.width(5.dp))
+
             if (messageState.isLoading)
                 CircularProgressIndicator(color = Maroon70)
             else

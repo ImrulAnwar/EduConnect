@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.imrul.educonnect.domain.model.User
 import com.imrul.educonnect.domain.network.AuthenticationDataSource
 import com.imrul.educonnect.domain.repository.AuthenticationRepository
+import com.imrul.educonnect.presentation.screen_send_message.model.Message
 import kotlinx.coroutines.flow.Flow
 
 class AuthenticationRepoImplementation(private val dataSource: AuthenticationDataSource) :
@@ -34,6 +35,14 @@ class AuthenticationRepoImplementation(private val dataSource: AuthenticationDat
             timestamp = timestamp
         )
     }
+
+    override suspend fun getMessages(
+        senderId: String?,
+        receiverId: String?
+    ): Flow<MutableList<Message>> = dataSource.getMessages(
+        senderId = senderId,
+        receiverId = receiverId
+    )
 
     override fun currentUser(): FirebaseUser? = dataSource.currentUser()
 

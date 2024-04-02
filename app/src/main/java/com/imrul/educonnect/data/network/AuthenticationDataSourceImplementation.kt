@@ -11,10 +11,13 @@ import com.imrul.educonnect.core.Constants.Companion.MESSAGES_COLLECTION
 import com.imrul.educonnect.core.Constants.Companion.USERS_COLLECTION
 import com.imrul.educonnect.domain.model.User
 import com.imrul.educonnect.domain.network.AuthenticationDataSource
+import com.imrul.educonnect.presentation.screen_send_message.model.Message
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.tasks.await
 
 //It is handling authentication, login & register credentials, retrieves user info
@@ -111,6 +114,27 @@ class AuthenticationDataSourceImplementation(
                 snapshot.documents.mapNotNull { document ->
                     document.toObject(User::class.java)
                 }.toMutableList()
+            }
+    }
+
+    override suspend fun getMessages(
+        senderId: String?,
+        receiverId: String?
+    ): Flow<MutableList<Message>> {
+        val combinedQuery = fireStore.collection(MESSAGES_COLLECTION)
+//            .whereEqualTo("senderId", senderId)
+//            .whereEqualTo("receiverId", listOf(senderId, receiverId))
+//            .orderBy("timestamp", Query.Direction.DESCENDING)
+
+
+        return combinedQuery.snapshotFlow()
+            .map { snapshot ->
+                val messagesList = mutableListOf<Message>()
+                snapshot.documents.forEach { document ->
+                    val message = document.toObject(Message::class.java)
+                    message?.let { messagesList.add(it) }
+                }
+                messagesList
             }
     }
 

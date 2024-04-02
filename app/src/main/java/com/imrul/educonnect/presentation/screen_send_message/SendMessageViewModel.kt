@@ -1,18 +1,20 @@
 package com.imrul.educonnect.presentation.screen_send_message
 
-import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
 import com.imrul.educonnect.core.Resource
+import com.imrul.educonnect.domain.user_cases.GetMessagesUseCase
 import com.imrul.educonnect.domain.user_cases.GetUserUseCase
 import com.imrul.educonnect.domain.user_cases.SendMessageUseCase
 import com.imrul.educonnect.presentation.screen_login.model.LoginState
 import com.imrul.educonnect.presentation.screen_login.model.UserState
-import com.imrul.educonnect.presentation.screen_register.model.RegisterState
+import com.imrul.educonnect.presentation.screen_send_message.model.Message
 import com.imrul.educonnect.presentation.screen_send_message.model.MessageState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +27,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SendMessageViewModel @Inject constructor(
     private val sendMessageUseCase: SendMessageUseCase,
-    private val getUserUseCase: GetUserUseCase
+    private val getUserUseCase: GetUserUseCase,
+    private val getMessagesUseCase: GetMessagesUseCase
 ) : ViewModel() {
     var sendMessageText by mutableStateOf("")
         private set
@@ -39,6 +42,9 @@ class SendMessageViewModel @Inject constructor(
 
     private val _messageState = MutableStateFlow(MessageState())
     val messageState = _messageState.asStateFlow()
+
+    private var _messagesState = mutableStateListOf<Message?>()
+    val messagesState: SnapshotStateList<Message?> = _messagesState
 
     fun onSendMessageTextChanged(value: String) {
         sendMessageText = value
@@ -66,6 +72,31 @@ class SendMessageViewModel @Inject constructor(
             }
         }.launchIn(viewModelScope)
     }
+
+    fun getMessages(
+        senderId: String?,
+        receiverId: String?
+    ) = getMessagesUseCase(
+        senderId = senderId,
+        receiverId = receiverId
+    ).onEach { result ->
+        when (result) {
+            is Resource.Success -> {
+                result.data?.let { list ->
+                    list.forEach { message ->
+                        _messagesState.add(message)
+                    }
+                }
+            }
+            is Resource.Error -> {
+//                    _usersState.value = UserState(error = result.message.toString())
+            }
+
+            is Resource.Loading -> {
+//                    _userState.value = UserState(isLoading = true)
+            }
+        }
+    }.launchIn(viewModelScope)
 
     fun sendMessage(
         senderId: String?,
