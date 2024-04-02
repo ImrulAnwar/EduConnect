@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -22,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.imrul.educonnect.core.Constants
+import com.imrul.educonnect.presentation.components.UserComponent
 import com.imrul.educonnect.presentation.screen_login.LoginViewModel
 import com.imrul.educonnect.ui.theme.Maroon80
 
@@ -34,14 +37,12 @@ fun MessagesScreen(navController: NavController, viewModel: LoginViewModel = hil
     Column(
         verticalArrangement = Arrangement.Center
     ) {
-        Button(
-            onClick = {
-                Log.d("Problem Check", "MessagesScreen: ${viewModel.usersState.toList().size}")
-            },
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Maroon80)
-        ) {
-            Text(text = Constants.SIGN_IN, fontSize = 14.sp)
+        LazyRow {
+            items(viewModel.usersState.toList()) { user ->
+                user?.displayName?.let {
+                    UserComponent(username = it, size = 100.dp) {}
+                }
+            }
         }
     }
 }

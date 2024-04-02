@@ -75,6 +75,7 @@ class AuthenticationDataSourceImplementation(
                 .whereNotEqualTo("uid", uid)
         } else {
             fireStore.collection(USERS_COLLECTION)
+                .whereNotEqualTo("uid", auth.currentUser?.uid)
         }
 
         return query.snapshotFlow()
