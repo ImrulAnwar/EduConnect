@@ -1,5 +1,6 @@
 package com.imrul.educonnect.domain.network
 
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseUser
 import com.imrul.educonnect.domain.model.User
 import kotlinx.coroutines.flow.Flow
@@ -12,6 +13,13 @@ interface AuthenticationDataSource {
     suspend fun getUsers(uid: String?): Flow<MutableList<User>>
 
     suspend fun getUser(uid: String?): User?
+
+    suspend fun sendMessage(
+        senderId: String?,
+        receiverId: String?,
+        message: String?,
+        timestamp: Timestamp
+    )
 
     fun currentUser(): FirebaseUser?
 

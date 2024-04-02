@@ -1,11 +1,13 @@
 package com.imrul.educonnect.data.network
 
 import android.util.Log
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import com.imrul.educonnect.core.Constants.Companion.MESSAGES_COLLECTION
 import com.imrul.educonnect.core.Constants.Companion.USERS_COLLECTION
 import com.imrul.educonnect.domain.model.User
 import com.imrul.educonnect.domain.network.AuthenticationDataSource
@@ -13,7 +15,6 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.tasks.await
 
 //It is handling authentication, login & register credentials, retrieves user info
@@ -66,6 +67,33 @@ class AuthenticationDataSourceImplementation(
                 .await()
                 .toObject(User::class.java)
         }
+
+    override suspend fun sendMessage(
+        senderId: String?,
+        receiverId: String?,
+        message: String?,
+        timestamp: Timestamp
+    ) {
+        senderId?.let { sender ->
+            Log.d("Problem", "SendMessageScreen: clicked")
+            receiverId?.let { receiver ->
+                message?.let { msg ->
+                    val data = hashMapOf(
+                        "senderId" to sender,
+                        "receiverId" to receiver,
+                        "message" to msg,
+                        "timestamp" to timestamp
+                    )
+                    fireStore
+                        .collection(MESSAGES_COLLECTION)
+                        .document()
+                        .set(data)
+                        .await()
+                }
+            }
+        }
+    }
+
 
     // Get users data with Firestore users collection
     override suspend fun getUsers(uid: String?): Flow<MutableList<User>> {

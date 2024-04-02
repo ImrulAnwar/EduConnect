@@ -1,5 +1,6 @@
 package com.imrul.educonnect.data.repository
 
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseUser
 import com.imrul.educonnect.domain.model.User
 import com.imrul.educonnect.domain.network.AuthenticationDataSource
@@ -20,6 +21,19 @@ class AuthenticationRepoImplementation(private val dataSource: AuthenticationDat
     override suspend fun getUsers(uid: String?): Flow<MutableList<User>> = dataSource.getUsers(uid)
 
     override suspend fun getUser(uid: String?): User? = dataSource.getUser(uid)
+    override suspend fun sendMessage(
+        senderId: String?,
+        receiverId: String?,
+        message: String?,
+        timestamp: Timestamp
+    ) {
+        dataSource.sendMessage(
+            senderId = senderId,
+            receiverId = receiverId,
+            message = message,
+            timestamp = timestamp
+        )
+    }
 
     override fun currentUser(): FirebaseUser? = dataSource.currentUser()
 
