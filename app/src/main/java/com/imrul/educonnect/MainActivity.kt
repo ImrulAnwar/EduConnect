@@ -15,8 +15,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.imrul.educonnect.presentation.components.CustomText
 import com.imrul.educonnect.presentation.screen_login.LoginViewModel
 import com.imrul.educonnect.presentation.navigation.BottomBarScreens
 import com.imrul.educonnect.presentation.navigation.NavGraph
@@ -24,6 +28,7 @@ import com.imrul.educonnect.ui.theme.EduConnectTheme
 import com.imrul.educonnect.ui.theme.Maroon10
 import com.imrul.educonnect.ui.theme.Maroon20
 import com.imrul.educonnect.ui.theme.Maroon70
+import com.imrul.educonnect.ui.theme.poppinsFontFamily
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -74,7 +79,13 @@ class MainActivity : ComponentActivity() {
                                             navController.popBackStack()
                                             navController.navigate(item.title)
                                         },
-                                        label = { Text(text = item.title) },
+                                        label = {
+                                            CustomText(
+                                                text = item.title,
+                                                size = 10.sp,
+                                                fontWeight = FontWeight.Bold
+                                            )
+                                        },
                                         alwaysShowLabel = false,
                                         icon = {
                                             BadgedBox(

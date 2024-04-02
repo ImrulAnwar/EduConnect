@@ -1,8 +1,10 @@
 package com.imrul.educonnect.core
 
 class Constants {
-    companion object{
+    companion object {
         const val EMAIL_PLACEHOLDER = "Email"
+        const val MESSAGES_PLACEHOLDER = "Messages"
+        const val COURSES_PLACEHOLDER = "Courses"
         const val USERNAME_PLACEHOLDER = "Username"
         const val PASSWORD_PLACEHOLDER = "Password"
         const val CONFIRM_PASSWORD_PLACEHOLDER = "Confirm Password"
