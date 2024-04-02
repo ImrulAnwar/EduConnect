@@ -1,13 +1,15 @@
 package com.imrul.educonnect.presentation.screen_send_message
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.imrul.educonnect.core.Constants.Companion.MESSAGES_COLLECTION
 import com.imrul.educonnect.core.Resource
 import com.imrul.educonnect.domain.user_cases.GetMessagesUseCase
 import com.imrul.educonnect.domain.user_cases.GetUserUseCase
@@ -18,6 +20,7 @@ import com.imrul.educonnect.presentation.screen_send_message.model.Message
 import com.imrul.educonnect.presentation.screen_send_message.model.MessageState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -42,9 +45,12 @@ class SendMessageViewModel @Inject constructor(
 
     private val _messageState = MutableStateFlow(MessageState())
     val messageState = _messageState.asStateFlow()
+    /*
+        private var _messagesState = mutableStateListOf<Message?>()
+        val messagesState: SnapshotStateList<Message?> = _messagesState*/
 
-    private var _messagesState = mutableStateListOf<Message?>()
-    val messagesState: SnapshotStateList<Message?> = _messagesState
+    private val _messagesState = MutableStateFlow<List<Message>>(emptyList())
+    val messagesState: StateFlow<List<Message>> get() = _messagesState
 
     fun onSendMessageTextChanged(value: String) {
         sendMessageText = value
@@ -53,6 +59,28 @@ class SendMessageViewModel @Inject constructor(
     private fun clearActions() {
 //        MessageState(message = null, isLoading = false, error = null)
         sendMessageText = ""
+    }
+
+    fun fetchItems(id1: String?, id2: String?) {
+        val db = Firebase.firestore
+        val itemsCollection = db.collection(MESSAGES_COLLECTION)
+            .orderBy("timestamp", Query.Direction.ASCENDING)
+
+        itemsCollection.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                // Handle error
+                return@addSnapshotListener
+            }
+
+            val itemsList = mutableListOf<Message>()
+            for (doc in snapshot!!) {
+                val item = doc.toObject(Message::class.java)
+                if ((item.senderId == id1 && item.receiverId == id2) || (item.senderId == id2 && item.receiverId == id1)) {
+                    itemsList.add(item)
+                }
+            }
+            _messagesState.value = itemsList
+        }
     }
 
     fun getUser(uid: String) {
@@ -84,10 +112,11 @@ class SendMessageViewModel @Inject constructor(
             is Resource.Success -> {
                 result.data?.let { list ->
                     list.forEach { message ->
-                        _messagesState.add(message)
+//                        _messagesState.add(message)
                     }
                 }
             }
+
             is Resource.Error -> {
 //                    _usersState.value = UserState(error = result.message.toString())
             }

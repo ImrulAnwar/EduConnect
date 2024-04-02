@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
@@ -40,6 +41,7 @@ import com.imrul.educonnect.presentation.components.MessageComponent
 import com.imrul.educonnect.presentation.components.RegularTextField
 import com.imrul.educonnect.presentation.screen_login.LoginViewModel
 import com.imrul.educonnect.ui.theme.Maroon70
+import kotlinx.coroutines.delay
 import java.util.Date
 
 @Composable
@@ -55,6 +57,9 @@ fun SendMessageScreen(
     val textReceiverUserState by sendMessageViewModel.textReceiverUserState.collectAsState()
     val loginState by loginViewModel.loginState.collectAsState()
     val messageState by sendMessageViewModel.messageState.collectAsState()
+    val messagesState by sendMessageViewModel.messagesState.collectAsState()
+
+    val listState = rememberLazyListState()
 
     LaunchedEffect(loginState) {
         loginViewModel.currentUser()
@@ -65,11 +70,22 @@ fun SendMessageScreen(
         }
     }
 
+
     LaunchedEffect(loginState, textReceiverUserState) {
-        sendMessageViewModel.getMessages(
-            senderId = loginState.user?.uid,
-            receiverId = textReceiverUserState.user?.uid
+//        sendMessageViewModel.getMessages(
+//            senderId = loginState.user?.uid,
+//            receiverId = textReceiverUserState.user?.uid
+//        )
+        sendMessageViewModel.fetchItems(
+            id1 = loginState.user?.uid,
+            id2 = textReceiverUserState.user?.uid
         )
+    }
+    if (messagesState.isNotEmpty()) {
+        LaunchedEffect(listState, messagesState) {
+            Log.d("problem", "SendMessageScreen: ${messagesState.size}")
+            listState.scrollToItem(messagesState.size - 1)
+        }
     }
 
     Column(
@@ -104,12 +120,14 @@ fun SendMessageScreen(
             )
         }
         LazyColumn(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.Start,
+            state = listState
         ) {
-            items(sendMessageViewModel.messagesState) { message ->
-                message.let {
-                    it?.message?.let { it1 -> MessageComponent(message = it1) }
-                }
+            items(messagesState) { message ->
+                MessageComponent(message = message.message)
             }
         }
         // bottom part
