@@ -30,7 +30,7 @@ fun CustomIcon(
         tint = Maroon70,
         modifier = Modifier
             .clip(CircleShape)
-            .clickable { }
+            .clickable { onClick() }
             .padding(padding)
             .size(size)
     )

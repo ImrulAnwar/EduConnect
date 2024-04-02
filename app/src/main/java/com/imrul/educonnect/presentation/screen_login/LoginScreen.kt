@@ -63,7 +63,6 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
 
     val loginState by viewModel.loginState.collectAsState()
     val context = LocalContext.current
-    val userState by viewModel.userState.collectAsState()
     // what is it doing?
 
     LaunchedEffect(loginState) {
@@ -76,9 +75,6 @@ fun LoginScreen(navController: NavController, viewModel: LoginViewModel = hiltVi
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         }
 
-        loginState.user?.let { user ->
-            viewModel.getUser(user.uid)
-        }
     }
 
 

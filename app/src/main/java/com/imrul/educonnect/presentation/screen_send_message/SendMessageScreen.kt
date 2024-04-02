@@ -13,6 +13,9 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -41,6 +44,13 @@ fun SendMessageScreen(
     val sendMessageText = sendMessageViewModel.sendMessageText
 
     val userProfileImage: Painter = painterResource(id = R.drawable.profile_image_placeholder)
+    val textReceiverUserState by sendMessageViewModel.textReceiverUserState.collectAsState()
+
+    LaunchedEffect(receiverUid) {
+        receiverUid?.let {
+            sendMessageViewModel.getUser(it)
+        }
+    }
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
@@ -54,12 +64,16 @@ fun SendMessageScreen(
             CustomIcon(
                 painter = rememberVectorPainter(image = Icons.AutoMirrored.Filled.ArrowBack),
                 contentDescription = "back_icon",
-                onClick = {}
+                onClick = { navController.popBackStack() }
             )
             Spacer(modifier = Modifier.width(10.dp))
             CircularImage(painter = userProfileImage, size = 40.dp)
             Spacer(modifier = Modifier.width(10.dp))
-            CustomText(text = "Username", size = 15.sp, fontWeight = FontWeight.Bold)
+            CustomText(
+                text = textReceiverUserState.user?.displayName ?: "Username",
+                size = 15.sp,
+                fontWeight = FontWeight.Bold
+            )
             //divides them to left and right
             Spacer(modifier = Modifier.weight(1f))
             CustomIcon(

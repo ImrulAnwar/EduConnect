@@ -56,9 +56,6 @@ class LoginViewModel @Inject constructor(
     private val _loginState = MutableStateFlow(LoginState())
     val loginState = _loginState.asStateFlow()
 
-    // User State for get last user data
-    private val _userState = MutableStateFlow(UserState())
-    val userState = _userState.asStateFlow()
 
     // Get User Detail Data with Mutable State List
     private var _usersState = mutableStateListOf<User?>()
@@ -113,11 +110,6 @@ class LoginViewModel @Inject constructor(
         connectivityObserver.observe().collect {
             _connectivityState.value = it
         }
-    }
-
-    fun postError() {
-        Log.d("problem check", "user: ${userState.value}")
-        Log.d("problem check", "user: ${_userState.value}")
     }
 
     // Check user last state for UI
@@ -187,24 +179,6 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun getUser(uid: String? = null) {
-        val userId = uid ?: _loginState.value.user?.uid
-        getUserUseCase(userId).onEach { result ->
-            when (result) {
-                is Resource.Success -> {
-                    _userState.value = UserState(user = result.data)
-                }
-
-                is Resource.Error -> {
-                    _userState.value = UserState(error = result.data.toString())
-                }
-
-                is Resource.Loading -> {
-                    _userState.value = UserState(isLoading = true)
-                }
-            }
-        }.launchIn(viewModelScope)
-    }
 
     fun getUsers(uid: String? = _loginState.value.user?.uid) =
         getUsersUseCase(uid).onEach { result ->
@@ -219,12 +193,12 @@ class LoginViewModel @Inject constructor(
 
                 is Resource.Error -> {
 
-                    _userState.value = UserState(error = result.message.toString())
+//                    _usersState.value = UserState(error = result.message.toString())
                 }
 
                 is Resource.Loading -> {
 
-                    _userState.value = UserState(isLoading = true)
+//                    _userState.value = UserState(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)
