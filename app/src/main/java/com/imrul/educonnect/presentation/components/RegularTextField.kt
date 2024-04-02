@@ -6,6 +6,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.imrul.educonnect.ui.theme.Maroon20
 import com.imrul.educonnect.ui.theme.Maroon70
@@ -15,9 +16,11 @@ import com.imrul.educonnect.ui.theme.Maroon70
 fun RegularTextField(
     text: String,
     onValueChange: (String) -> Unit,
-    label: String
+    label: String,
+    modifier: Modifier = Modifier
 ) {
     OutlinedTextField(
+        modifier = modifier,
         shape = RoundedCornerShape(16.dp),
         singleLine = true,
         value = text,

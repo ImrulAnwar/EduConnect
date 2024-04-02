@@ -4,6 +4,7 @@ class Constants {
     companion object {
         const val EMAIL_PLACEHOLDER = "Email"
         const val MESSAGES_PLACEHOLDER = "Messages"
+        const val MESSAGE_PLACEHOLDER = "Message"
         const val COURSES_PLACEHOLDER = "Courses"
         const val USERNAME_PLACEHOLDER = "Username"
         const val PASSWORD_PLACEHOLDER = "Password"
