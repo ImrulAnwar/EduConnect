@@ -31,12 +31,12 @@ fun UserComponent(
             .clickable {
                 onClick()
             }
-            .padding(20.dp),
+            .padding(10.dp, 0.dp, 10.dp, 0.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CircularImage(painter = painter, size = size)
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
             text = username,
             style = TextStyle(

@@ -2,8 +2,11 @@ package com.imrul.educonnect.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.imrul.educonnect.core.Constants.Companion.RECEIVER_UID_VARIABLE_NAME
 import com.imrul.educonnect.core.Routes.Companion.COURSES_SCREEN_ROUTE
 import com.imrul.educonnect.core.Routes.Companion.EDIT_PROFILE_SCREEN_ROUTE
 import com.imrul.educonnect.core.Routes.Companion.LOGIN_SCREEN_ROUTE
@@ -60,9 +63,17 @@ fun NavGraph(
             EditProfileScreen(navController = navController)
         }
         composable(
-            route = SEND_MESSAGE_SCREEN_ROUTE
+            route = SEND_MESSAGE_SCREEN_ROUTE + "/{${RECEIVER_UID_VARIABLE_NAME}}",
+            arguments = listOf(
+                navArgument(name = RECEIVER_UID_VARIABLE_NAME) {
+                    type = NavType.StringType
+                }
+            )
         ) {
-            SendMessageScreen(navController = navController)
+            SendMessageScreen(
+                navController = navController,
+                receiverUid = it.arguments?.getString(RECEIVER_UID_VARIABLE_NAME)
+            )
         }
     }
 }

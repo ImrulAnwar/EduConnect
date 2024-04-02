@@ -10,4 +10,5 @@ class Routes {
         const val SEND_MESSAGE_SCREEN_ROUTE = "send_message"
         const val EDIT_PROFILE_SCREEN_ROUTE = "edit_profile"
     }
+
 }

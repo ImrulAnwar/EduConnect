@@ -16,6 +16,7 @@ class Constants {
         const val SIGN_UP_WITH = "Sign Up with"
         const val SIGN_IN_WITH = "Sign In with"
         const val USERS_COLLECTION = "users"
+        const val RECEIVER_UID_VARIABLE_NAME = "receiverUid"
         const val USERNAME_REGEX = "^[A-Za-z][A-Za-z0-9_]{5,12}$"
 
     }

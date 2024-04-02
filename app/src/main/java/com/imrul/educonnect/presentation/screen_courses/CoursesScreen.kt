@@ -1,7 +1,9 @@
 package com.imrul.educonnect.presentation.screen_courses
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
@@ -23,12 +25,15 @@ fun CoursesScreen(
     navController: NavController,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
-    CustomText(
-        text = Constants.COURSES_PLACEHOLDER,
-        size = 25.sp,
-        fontWeight = FontWeight.Bold,
-        modifier = Modifier.padding(0.dp, 10.dp, 0.dp, 0.dp)
-    )
-    Spacer(modifier = Modifier.width(8.dp))
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        CustomText(
+            text = Constants.COURSES_PLACEHOLDER,
+            size = 25.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(0.dp, 10.dp, 0.dp, 0.dp)
+        )
+    }
 }
 
