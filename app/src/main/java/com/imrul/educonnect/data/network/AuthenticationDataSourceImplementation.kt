@@ -1,5 +1,6 @@
 package com.imrul.educonnect.data.network
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -12,10 +13,10 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.tasks.await
 
 //It is handling authentication, login & register credentials, retrieves user info
-
 class AuthenticationDataSourceImplementation(
     private val auth: FirebaseAuth,
     private val fireStore: FirebaseFirestore
@@ -67,10 +68,22 @@ class AuthenticationDataSourceImplementation(
         }
 
     // Get users data with Firestore users collection
-    override suspend fun getUsers(uid: String?): Flow<MutableList<User>> =
-        fireStore.collection(USERS_COLLECTION)
-            .whereEqualTo("uid", uid)
-            .snapshotFlow().map { it.toObjects(User::class.java) }
+    override suspend fun getUsers(uid: String?): Flow<MutableList<User>> {
+        // Check if uid is null to determine the query logic
+        val query = if (uid != null) {
+            fireStore.collection(USERS_COLLECTION)
+                .whereNotEqualTo("uid", uid)
+        } else {
+            fireStore.collection(USERS_COLLECTION)
+        }
+
+        return query.snapshotFlow()
+            .map { snapshot ->
+                snapshot.documents.mapNotNull { document ->
+                    document.toObject(User::class.java)
+                }.toMutableList()
+            }
+    }
 
     // Additional Firebase Functions
     private fun Query.snapshotFlow(): Flow<QuerySnapshot> = callbackFlow {
@@ -92,3 +105,5 @@ class AuthenticationDataSourceImplementation(
     override fun signOut() = auth.signOut()
 
 }
+
+

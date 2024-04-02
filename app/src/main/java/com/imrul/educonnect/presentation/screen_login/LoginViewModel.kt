@@ -15,6 +15,7 @@ import com.imrul.educonnect.core.Routes.Companion.LOGIN_SCREEN_ROUTE
 import com.imrul.educonnect.domain.model.User
 import com.imrul.educonnect.domain.network.ConnectivityObserver
 import com.imrul.educonnect.domain.user_cases.GetUserUseCase
+import com.imrul.educonnect.domain.user_cases.GetUsersUseCase
 import com.imrul.educonnect.domain.user_cases.SignInUseCase
 import com.imrul.educonnect.domain.user_cases.SignOutUseCase
 import com.imrul.educonnect.domain.user_cases.UserStateUseCase
@@ -38,7 +39,7 @@ class LoginViewModel @Inject constructor(
     private val userStateUseCase: UserStateUseCase,
     private val signOutUseCase: SignOutUseCase,
     // Get info on user, users
-//    private val getUsersUseCase: GetUsersUseCase,
+    private val getUsersUseCase: GetUsersUseCase,
     private val getUserUseCase: GetUserUseCase
 ) : ViewModel() {
     private val _selectedItemIndex = MutableStateFlow(0)
@@ -204,6 +205,29 @@ class LoginViewModel @Inject constructor(
             }
         }.launchIn(viewModelScope)
     }
+
+    fun getUsers(uid: String? = _loginState.value.user?.uid) =
+        getUsersUseCase(uid).onEach { result ->
+            when (result) {
+                is Resource.Success -> {
+                    result.data?.let { list ->
+                        list.forEach { user ->
+                            _usersState.add(user)
+                        }
+                    }
+                }
+
+                is Resource.Error -> {
+
+                    _userState.value = UserState(error = result.message.toString())
+                }
+
+                is Resource.Loading -> {
+
+                    _userState.value = UserState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
 
     fun setSelectedItem(index: Int) {
         _selectedItemIndex.value = index

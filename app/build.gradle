@@ -97,6 +97,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore-ktx:24.10.3'
     implementation 'com.google.firebase:firebase-auth-ktx:22.3.1'
 
-
+    def stream_version = '6.2.3'
+    //StreamChat
+    implementation "io.getstream:stream-chat-android-client:$stream_version"
+    implementation "io.getstream:stream-chat-android-state:$stream_version"
+    implementation "io.getstream:stream-chat-android-offline:$stream_version"
+    implementation "io.getstream:stream-chat-android-compose:$stream_version"
 
 }
