@@ -1,4 +1,4 @@
-package com.imrul.educonnect.presentation.screen_courses
+package com.imrul.educonnect.presentation.screen_edit_profile
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,12 +13,12 @@ import androidx.navigation.NavController
 import com.imrul.educonnect.presentation.screen_login.LoginViewModel
 
 @Composable
-fun CoursesScreen(
+fun EditProfileScreen(
     navController: NavController,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     Text(
-        text = "Courses Screen", modifier = Modifier
+        text = "Edit Profile Screen", modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     )

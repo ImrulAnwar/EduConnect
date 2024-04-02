@@ -1,4 +1,4 @@
-package com.imrul.educonnect.presentation.login
+package com.imrul.educonnect.presentation.screen_login
 
 import android.util.Log
 import android.util.Patterns
@@ -10,8 +10,6 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import com.google.android.gms.tasks.Tasks.await
 import com.imrul.educonnect.core.Resource
 import com.imrul.educonnect.core.Routes.Companion.LOGIN_SCREEN_ROUTE
 import com.imrul.educonnect.domain.model.User
@@ -20,10 +18,9 @@ import com.imrul.educonnect.domain.user_cases.GetUserUseCase
 import com.imrul.educonnect.domain.user_cases.SignInUseCase
 import com.imrul.educonnect.domain.user_cases.SignOutUseCase
 import com.imrul.educonnect.domain.user_cases.UserStateUseCase
-import com.imrul.educonnect.presentation.login.model.LoginState
-import com.imrul.educonnect.presentation.login.model.UserState
+import com.imrul.educonnect.presentation.screen_login.model.LoginState
+import com.imrul.educonnect.presentation.screen_login.model.UserState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

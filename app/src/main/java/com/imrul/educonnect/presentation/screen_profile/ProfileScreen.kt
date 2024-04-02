@@ -1,6 +1,7 @@
 package com.imrul.educonnect.presentation.screen_profile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,8 +29,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.imrul.educonnect.R
 import com.imrul.educonnect.core.Constants
+import com.imrul.educonnect.core.Routes.Companion.EDIT_PROFILE_SCREEN_ROUTE
 import com.imrul.educonnect.presentation.components.CircularImage
-import com.imrul.educonnect.presentation.login.LoginViewModel
+import com.imrul.educonnect.presentation.screen_login.LoginViewModel
 import com.imrul.educonnect.ui.theme.Maroon20
 import com.imrul.educonnect.ui.theme.Maroon80
 
@@ -100,7 +102,10 @@ fun ProfileScreen(
                 text = "Edit Profile",
                 style = TextStyle(
                     fontWeight = FontWeight.Bold
-                )
+                ),
+                modifier = Modifier.clickable {
+                    navController.navigate(EDIT_PROFILE_SCREEN_ROUTE)
+                }
             )
             Spacer(modifier = Modifier.height(20.dp))
             Button(

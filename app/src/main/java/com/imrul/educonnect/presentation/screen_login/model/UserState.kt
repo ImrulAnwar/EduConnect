@@ -1,4 +1,4 @@
-package com.imrul.educonnect.presentation.login.model
+package com.imrul.educonnect.presentation.screen_login.model
 
 import com.imrul.educonnect.domain.model.User
 

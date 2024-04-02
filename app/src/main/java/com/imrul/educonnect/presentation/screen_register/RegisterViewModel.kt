@@ -1,4 +1,4 @@
-package com.imrul.educonnect.presentation.register
+package com.imrul.educonnect.presentation.screen_register
 
 import android.util.Patterns
 import androidx.compose.runtime.State
@@ -7,13 +7,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.imrul.educonnect.core.Constants.Companion.USERNAME_REGEX
 import com.imrul.educonnect.core.Resource
 import com.imrul.educonnect.core.Routes.Companion.LOGIN_SCREEN_ROUTE
 import com.imrul.educonnect.domain.user_cases.RegisterUseCase
-import com.imrul.educonnect.presentation.register.model.RegisterState
+import com.imrul.educonnect.presentation.screen_register.model.RegisterState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
