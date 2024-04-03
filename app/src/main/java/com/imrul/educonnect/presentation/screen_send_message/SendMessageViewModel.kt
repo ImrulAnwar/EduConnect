@@ -101,7 +101,7 @@ class SendMessageViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun getMessages(
+    fun fetchMessages(
         senderId: String?,
         receiverId: String?
     ) = getMessagesUseCase(
@@ -111,9 +111,7 @@ class SendMessageViewModel @Inject constructor(
         when (result) {
             is Resource.Success -> {
                 result.data?.let { list ->
-                    list.forEach { message ->
-//                        _messagesState.add(message)
-                    }
+                    _messagesState.value = list
                 }
             }
 

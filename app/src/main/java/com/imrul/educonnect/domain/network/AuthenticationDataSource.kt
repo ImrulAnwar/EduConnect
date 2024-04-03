@@ -26,7 +26,7 @@ interface AuthenticationDataSource {
         receiverId: String?
     ): Flow<MutableList<Message>>
 
-
+    suspend fun fetchItems(id1: String?, id2: String?): MutableList<Message>
     fun currentUser(): FirebaseUser?
 
     fun signOut()

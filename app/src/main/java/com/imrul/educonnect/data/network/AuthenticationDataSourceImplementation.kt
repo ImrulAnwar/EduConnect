@@ -21,6 +21,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flatMapMerge
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.tasks.await
@@ -142,6 +143,46 @@ class AuthenticationDataSourceImplementation(
                 messagesList
             }
     }
+
+//    override suspend fun fetchItems(id1: String?, id2: String?): MutableList<Message> {
+//        val itemsCollection = fireStore.collection(MESSAGES_COLLECTION)
+//            .orderBy("timestamp", Query.Direction.ASCENDING)
+//
+//        val itemsList = mutableListOf<Message>()
+//
+//        itemsCollection.get().addOnSuccessListener { snapshot ->
+//            for (doc in snapshot) {
+//                val item =
+//                    doc.toObject(Message::class.java)  // Use !! for non-null assertion after successful retrieval
+//                if ((item.senderId == id1 && item.receiverId == id2) || (item.senderId == id2 && item.receiverId == id1)) {
+//                    itemsList.add(item)
+//                }
+//            }
+//        }.addOnFailureListener { exception ->
+//            // Handle error
+//        }
+//
+//        return itemsList // Return the empty list if no data is fetched yet
+//    }
+
+    override suspend fun fetchItems(id1: String?, id2: String?): MutableList<Message> {
+        val itemsCollection = fireStore.collection(MESSAGES_COLLECTION)
+            .orderBy("timestamp", Query.Direction.ASCENDING)
+
+        val querySnapshot = itemsCollection.get().await()  // Wait for data
+
+        val itemsList = mutableListOf<Message>()
+        for (doc in querySnapshot) {
+            val item =
+                doc.toObject(Message::class.java)  // Use !! for non-null assertion after successful retrieval
+            if ((item.senderId == id1 && item.receiverId == id2) || (item.senderId == id2 && item.receiverId == id1)) {
+                itemsList.add(item)
+            }
+        }
+
+        return itemsList  // Return the populated list
+    }
+
 
     // Additional Firebase Functions
     private fun Query.snapshotFlow(): Flow<QuerySnapshot> = callbackFlow {
