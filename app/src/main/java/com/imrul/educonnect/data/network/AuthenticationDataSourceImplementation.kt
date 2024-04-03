@@ -4,9 +4,14 @@ import android.util.Log
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FieldValue.serverTimestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.ktx.app
+import com.google.firestore.v1.DocumentTransform.FieldTransform.ServerValue
 import com.imrul.educonnect.core.Constants.Companion.MESSAGES_COLLECTION
 import com.imrul.educonnect.core.Constants.Companion.USERS_COLLECTION
 import com.imrul.educonnect.domain.model.User
@@ -19,6 +24,7 @@ import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.tasks.await
+import java.sql.Types.TIMESTAMP
 
 //It is handling authentication, login & register credentials, retrieves user info
 class AuthenticationDataSourceImplementation(
@@ -75,7 +81,6 @@ class AuthenticationDataSourceImplementation(
         senderId: String?,
         receiverId: String?,
         message: String?,
-        timestamp: Timestamp
     ) {
         senderId?.let { sender ->
             Log.d("Problem", "SendMessageScreen: clicked")
@@ -85,7 +90,7 @@ class AuthenticationDataSourceImplementation(
                         "senderId" to sender,
                         "receiverId" to receiver,
                         "message" to msg,
-                        "timestamp" to timestamp
+                        "timestamp" to serverTimestamp()// Use serverTimestamp
                     )
                     fireStore
                         .collection(MESSAGES_COLLECTION)

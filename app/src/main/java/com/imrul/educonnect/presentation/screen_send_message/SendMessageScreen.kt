@@ -2,6 +2,7 @@ package com.imrul.educonnect.presentation.screen_send_message
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -40,8 +41,8 @@ import com.imrul.educonnect.presentation.components.CustomText
 import com.imrul.educonnect.presentation.components.MessageComponent
 import com.imrul.educonnect.presentation.components.RegularTextField
 import com.imrul.educonnect.presentation.screen_login.LoginViewModel
+import com.imrul.educonnect.ui.theme.Maroon20
 import com.imrul.educonnect.ui.theme.Maroon70
-import kotlinx.coroutines.delay
 import java.util.Date
 
 @Composable
@@ -123,11 +124,20 @@ fun SendMessageScreen(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
-            horizontalAlignment = Alignment.Start,
             state = listState
         ) {
             items(messagesState) { message ->
-                MessageComponent(message = message.message)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = if (message.senderId == loginState.user?.uid)
+                        Arrangement.End else Arrangement.Start
+                ) {
+                    MessageComponent(
+                        message = message.message,
+                        color = if (message.senderId == loginState.user?.uid) Maroon70 else Maroon20,
+                        textcolor = if (message.senderId == loginState.user?.uid) Maroon20 else Maroon70,
+                    )
+                }
             }
         }
         // bottom part
@@ -165,7 +175,6 @@ fun SendMessageScreen(
                                 senderId = loginState.user?.uid,
                                 message = sendMessageText,
                                 receiverId = textReceiverUserState.user?.uid,
-                                timestamp = Timestamp(Date())
                             )
                         }
                     }

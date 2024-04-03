@@ -17,7 +17,6 @@ class SendMessageUseCase @Inject constructor(
         senderId: String?,
         receiverId: String?,
         message: String?,
-        timestamp: Timestamp
     ): Flow<Resource<Unit>> = flow {
         try {
             emit(Resource.Loading())
@@ -25,7 +24,6 @@ class SendMessageUseCase @Inject constructor(
                 senderId = senderId,
                 receiverId = receiverId,
                 message = message,
-                timestamp = timestamp
             )
             emit(Resource.Success(sendMessage))
 

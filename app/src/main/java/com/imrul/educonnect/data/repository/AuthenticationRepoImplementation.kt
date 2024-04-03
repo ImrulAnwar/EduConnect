@@ -26,13 +26,11 @@ class AuthenticationRepoImplementation(private val dataSource: AuthenticationDat
         senderId: String?,
         receiverId: String?,
         message: String?,
-        timestamp: Timestamp
     ) {
         dataSource.sendMessage(
             senderId = senderId,
             receiverId = receiverId,
             message = message,
-            timestamp = timestamp
         )
     }
 

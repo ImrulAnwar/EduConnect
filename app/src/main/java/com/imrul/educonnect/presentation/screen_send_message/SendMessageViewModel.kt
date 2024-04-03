@@ -131,13 +131,11 @@ class SendMessageViewModel @Inject constructor(
         senderId: String?,
         receiverId: String?,
         message: String?,
-        timestamp: Timestamp
     ) = viewModelScope.launch {
         sendMessageUseCase(
             senderId = senderId,
             receiverId = receiverId,
             message = message,
-            timestamp = timestamp
         ).collect { result ->
             when (result) {
                 is Resource.Success -> {

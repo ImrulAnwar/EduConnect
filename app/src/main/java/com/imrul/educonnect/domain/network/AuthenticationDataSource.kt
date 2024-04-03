@@ -19,7 +19,6 @@ interface AuthenticationDataSource {
         senderId: String?,
         receiverId: String?,
         message: String?,
-        timestamp: Timestamp
     )
 
     suspend fun getMessages(
