@@ -79,10 +79,10 @@ fun SendMessageScreen(
             id2 = textReceiverUserState.user?.uid
         )
 
-//        sendMessageViewModel.fetchMessages(
-//            senderId = loginState.user?.uid,
-//            receiverId = textReceiverUserState.user?.uid
-//        )
+        sendMessageViewModel.fetchMessages(
+            senderId = loginState.user?.uid,
+            receiverId = textReceiverUserState.user?.uid
+        )
     }
     if (messagesState.isNotEmpty()) {
         LaunchedEffect(listState, messagesState) {
