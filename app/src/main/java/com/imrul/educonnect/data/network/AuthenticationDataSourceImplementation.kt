@@ -147,38 +147,55 @@ class AuthenticationDataSourceImplementation(
 //    override suspend fun fetchItems(id1: String?, id2: String?): MutableList<Message> {
 //        val itemsCollection = fireStore.collection(MESSAGES_COLLECTION)
 //            .orderBy("timestamp", Query.Direction.ASCENDING)
+//        Log.d("Problem", "fetchItems: $itemsCollection")
 //
 //        val itemsList = mutableListOf<Message>()
-//
-//        itemsCollection.get().addOnSuccessListener { snapshot ->
-//            for (doc in snapshot) {
-//                val item =
-//                    doc.toObject(Message::class.java)  // Use !! for non-null assertion after successful retrieval
+//        itemsCollection.addSnapshotListener { snapshot, error ->
+//            if (error != null) {
+//                // Handle error
+//                return@addSnapshotListener
+//            }
+//            for (doc in snapshot!!) {
+//                val item = doc.toObject(Message::class.java)
 //                if ((item.senderId == id1 && item.receiverId == id2) || (item.senderId == id2 && item.receiverId == id1)) {
 //                    itemsList.add(item)
 //                }
 //            }
-//        }.addOnFailureListener { exception ->
-//            // Handle error
 //        }
 //
-//        return itemsList // Return the empty list if no data is fetched yet
+//        return itemsList  // Return the populated list
 //    }
 
     override suspend fun fetchItems(id1: String?, id2: String?): MutableList<Message> {
         val itemsCollection = fireStore.collection(MESSAGES_COLLECTION)
             .orderBy("timestamp", Query.Direction.ASCENDING)
 
-        val querySnapshot = itemsCollection.get().await()  // Wait for data
+//        val querySnapshot = itemsCollection.get().await()  // Wait for data
 
         val itemsList = mutableListOf<Message>()
-        for (doc in querySnapshot) {
-            val item =
-                doc.toObject(Message::class.java)  // Use !! for non-null assertion after successful retrieval
-            if ((item.senderId == id1 && item.receiverId == id2) || (item.senderId == id2 && item.receiverId == id1)) {
-                itemsList.add(item)
+        itemsCollection.addSnapshotListener { snapshot, error ->
+            if (error != null) {
+                // Handle error
+                return@addSnapshotListener
             }
+            if (snapshot != null) {
+                for (doc in snapshot) {
+                    val item = doc.toObject(Message::class.java)
+                    if ((item.senderId == id1 && item.receiverId == id2) || (item.senderId == id2 && item.receiverId == id1)) {
+                        itemsList.add(item)
+                    }
+                }
+            }
+            Log.d("problem", "fetchItems:$itemsList")
         }
+//        for (doc in querySnapshot) {
+//            val item =
+//                doc.toObject(Message::class.java)  // Use !! for non-null assertion after successful retrieval
+//            if ((item.senderId == id1 && item.receiverId == id2) || (item.senderId == id2 && item.receiverId == id1)) {
+//                itemsList.add(item)
+//            }
+//        }
+
 
         return itemsList  // Return the populated list
     }

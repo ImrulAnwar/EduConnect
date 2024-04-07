@@ -11,6 +11,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.imrul.educonnect.core.Constants.Companion.MESSAGES_COLLECTION
 import com.imrul.educonnect.core.Resource
+import com.imrul.educonnect.domain.user_cases.FetchMessagesUseCase
 import com.imrul.educonnect.domain.user_cases.GetMessagesUseCase
 import com.imrul.educonnect.domain.user_cases.GetUserUseCase
 import com.imrul.educonnect.domain.user_cases.SendMessageUseCase
@@ -31,8 +32,10 @@ import javax.inject.Inject
 class SendMessageViewModel @Inject constructor(
     private val sendMessageUseCase: SendMessageUseCase,
     private val getUserUseCase: GetUserUseCase,
-    private val getMessagesUseCase: GetMessagesUseCase
-) : ViewModel() {
+    private val getMessagesUseCase: GetMessagesUseCase,
+    private val fetchMessagesUseCase: FetchMessagesUseCase,
+
+    ) : ViewModel() {
     var sendMessageText by mutableStateOf("")
         private set
 
@@ -104,7 +107,7 @@ class SendMessageViewModel @Inject constructor(
     fun fetchMessages(
         senderId: String?,
         receiverId: String?
-    ) = getMessagesUseCase(
+    ) = fetchMessagesUseCase(
         senderId = senderId,
         receiverId = receiverId
     ).onEach { result ->
