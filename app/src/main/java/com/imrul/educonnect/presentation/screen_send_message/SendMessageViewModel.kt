@@ -1,5 +1,6 @@
 package com.imrul.educonnect.presentation.screen_send_message
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -114,6 +115,7 @@ class SendMessageViewModel @Inject constructor(
         when (result) {
             is Resource.Success -> {
                 result.data?.let { list ->
+                    Log.d("problem", "fetchItems from viewModel:$list")
                     _messagesState.value = list
                 }
             }
