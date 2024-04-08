@@ -20,12 +20,14 @@ import com.imrul.educonnect.presentation.screen_send_message.model.Message
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import java.sql.Types.TIMESTAMP
 import kotlin.coroutines.resume
@@ -149,61 +151,64 @@ class AuthenticationDataSourceImplementation(
             }
     }
 
-    override suspend fun fetchItems(id1: String?, id2: String?): MutableList<Message>  {
-        val itemsCollection = fireStore.collection(MESSAGES_COLLECTION)
-            .orderBy("timestamp", Query.Direction.ASCENDING)
-
-
-        val itemsList = mutableListOf<Message>()
-        itemsCollection.addSnapshotListener { snapshot, error ->
-            // await() start
-            if (error != null) {
-                // Handle error
-                return@addSnapshotListener
-            }
-            if (snapshot != null) {
-                for (doc in snapshot) {
-                    val item = doc.toObject(Message::class.java)
-                    if ((item.senderId == id1 && item.receiverId == id2) || (item.senderId == id2 && item.receiverId == id1)) {
-                        itemsList.add(item)
-                    }
-                }
-            }
-            // await() end
-            Log.d("problem", "inside listener:$itemsList")
-        }
-        Log.d("problem", "outside listener:$itemsList")
-
-        return itemsList  // Return the populated list
-    }
-
-//    override suspend fun fetchItems(id1: String?, id2: String?): MutableList<Message> {
+//    override suspend fun fetchItems(id1: String?, id2: String?): MutableList<Message>  {
 //        val itemsCollection = fireStore.collection(MESSAGES_COLLECTION)
 //            .orderBy("timestamp", Query.Direction.ASCENDING)
 //
-//        val itemsList = mutableListOf<Message>()
 //
-//        val flow =  {
-//            itemsCollection.addSnapshotListener { snapshot, error ->
-//                if (error != null) {
-//                    // Handle error
-//                    return@addSnapshotListener
-//                }
-//                if (snapshot != null) {
-//                    itemsList.clear() // Clear previous messages, if needed
-//                    for (doc in snapshot) {
-//                        val item = doc.toObject(Message::class.java)
-//                        if ((item.senderId == id1 && item.receiverId == id2) || (item.senderId == id2 && item.receiverId == id1)) {
-//                            itemsList.add(item)
-//                        }
+//        val itemsList = mutableListOf<Message>()
+//        itemsCollection.addSnapshotListener { snapshot, error ->
+//            if (error != null) {
+//                // Handle error
+//                return@addSnapshotListener
+//            }
+//            if (snapshot != null) {
+//                for (doc in snapshot) {
+//                    val item = doc.toObject(Message::class.java)
+//                    if ((item.senderId == id1 && item.receiverId == id2) || (item.senderId == id2 && item.receiverId == id1)) {
+//                        itemsList.add(item)
 //                    }
-//                    // Emit the updated list within the lambda
-//                    emit(itemsList)
 //                }
 //            }
+//            Log.d("problem", "inside listener:$itemsList")
 //        }
-//        return itemsList// Convert flow to a mutable list (optional)
+////        delay(1000)
+//        Log.d("problem", "outside listener:$itemsList")
+//
+//        return itemsList  // Return the populated list
 //    }
+
+    override suspend fun fetchItems(id1: String?, id2: String?): MutableList<Message> =
+        suspendCancellableCoroutine { continuation ->
+            val itemsCollection = fireStore.collection(MESSAGES_COLLECTION)
+                .orderBy("timestamp", Query.Direction.ASCENDING)
+
+            val itemsList = mutableListOf<Message>()
+
+            val listenerRegistration = itemsCollection.addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    // Handle error
+                    continuation.resumeWithException(error)
+                    return@addSnapshotListener
+                }
+                if (snapshot != null) {
+                    itemsList.clear() // Clear list before populating again
+                    for (doc in snapshot) {
+                        val item = doc.toObject(Message::class.java)
+                        if ((item.senderId == id1 && item.receiverId == id2) || (item.senderId == id2 && item.receiverId == id1)) {
+                            itemsList.add(item)
+                        }
+                    }
+                    Log.d("problem", "inside listener:$itemsList")
+                    continuation.resume(itemsList)
+                }
+            }
+
+            continuation.invokeOnCancellation {
+                // Cancel the listener registration if coroutine is cancelled
+                listenerRegistration.remove()
+            }
+        }
 
 
     // Additional Firebase Functions

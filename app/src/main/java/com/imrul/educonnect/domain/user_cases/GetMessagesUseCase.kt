@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.imrul.educonnect.core.Resource
 import com.imrul.educonnect.domain.repository.AuthenticationRepository
 import com.imrul.educonnect.presentation.screen_send_message.model.Message
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -21,6 +22,7 @@ class GetMessagesUseCase @Inject constructor(
             repository.getMessages(senderId = senderId, receiverId = receiverId).collect {
                 emit(Resource.Success(it))
             }
+
         } catch (e: FirebaseAuthException) {
             emit(Resource.Error(message = e.message.toString()))
         } catch (e: FirebaseNetworkException) {

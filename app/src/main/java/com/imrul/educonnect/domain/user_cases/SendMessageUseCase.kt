@@ -6,6 +6,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuthException
 import com.imrul.educonnect.core.Resource
 import com.imrul.educonnect.domain.repository.AuthenticationRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -25,6 +26,7 @@ class SendMessageUseCase @Inject constructor(
                 receiverId = receiverId,
                 message = message,
             )
+
             emit(Resource.Success(sendMessage))
 
         } catch (e: FirebaseAuthException) {
