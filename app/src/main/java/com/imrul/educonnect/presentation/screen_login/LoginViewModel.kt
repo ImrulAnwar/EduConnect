@@ -1,6 +1,5 @@
 package com.imrul.educonnect.presentation.screen_login
 
-import android.util.Log
 import android.util.Patterns
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -20,7 +19,6 @@ import com.imrul.educonnect.domain.user_cases.SignInUseCase
 import com.imrul.educonnect.domain.user_cases.SignOutUseCase
 import com.imrul.educonnect.domain.user_cases.UserStateUseCase
 import com.imrul.educonnect.presentation.screen_login.model.LoginState
-import com.imrul.educonnect.presentation.screen_login.model.UserState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -192,7 +190,6 @@ class LoginViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-
 //                    _usersState.value = UserState(error = result.message.toString())
                 }
 

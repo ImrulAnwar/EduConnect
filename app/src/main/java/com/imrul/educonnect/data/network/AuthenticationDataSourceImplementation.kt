@@ -1,41 +1,20 @@
 package com.imrul.educonnect.data.network
 
-import android.util.Log
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FieldValue.serverTimestamp
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.ktx.app
-import com.google.firestore.v1.DocumentTransform.FieldTransform.ServerValue
 import com.imrul.educonnect.core.Constants.Companion.MESSAGES_COLLECTION
 import com.imrul.educonnect.core.Constants.Companion.USERS_COLLECTION
 import com.imrul.educonnect.domain.model.User
 import com.imrul.educonnect.domain.network.AuthenticationDataSource
-import com.imrul.educonnect.presentation.screen_send_message.model.Message
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.awaitCancellation
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flatMapMerge
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
-import java.sql.Types.TIMESTAMP
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 //It is handling authentication, login & register credentials, retrieves user info
 class AuthenticationDataSourceImplementation(
