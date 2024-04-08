@@ -77,10 +77,7 @@ fun SendMessageScreen(
         val senderId = loginState.user?.uid
         val receiverId = textReceiverUserState.user?.uid
 
-        if (senderId != null && receiverId != null) {
-            sendMessageViewModel.fetchItems(senderId, receiverId)
-            // Do something with the fetched messages
-        }
+        sendMessageViewModel.fetchMessages(senderId, receiverId)
     }
     if (messagesState.isNotEmpty()) {
         LaunchedEffect(listState, messagesState) {

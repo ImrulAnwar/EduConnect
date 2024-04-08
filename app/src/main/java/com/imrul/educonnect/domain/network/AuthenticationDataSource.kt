@@ -1,9 +1,8 @@
 package com.imrul.educonnect.domain.network
 
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.Query
 import com.imrul.educonnect.domain.model.User
-import com.imrul.educonnect.presentation.screen_send_message.model.Message
 import kotlinx.coroutines.flow.Flow
 
 interface AuthenticationDataSource {
@@ -21,12 +20,7 @@ interface AuthenticationDataSource {
         message: String?,
     )
 
-    suspend fun getMessages(
-        senderId: String?,
-        receiverId: String?
-    ): Flow<MutableList<Message>>
-
-    suspend fun fetchItems(id1: String?, id2: String?): MutableList<Message>
+    suspend fun fetchItems(id1: String?, id2: String?): Query
     fun currentUser(): FirebaseUser?
 
     fun signOut()

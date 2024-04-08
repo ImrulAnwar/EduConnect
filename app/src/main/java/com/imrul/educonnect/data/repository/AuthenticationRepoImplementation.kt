@@ -1,11 +1,10 @@
 package com.imrul.educonnect.data.repository
 
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.Query
 import com.imrul.educonnect.domain.model.User
 import com.imrul.educonnect.domain.network.AuthenticationDataSource
 import com.imrul.educonnect.domain.repository.AuthenticationRepository
-import com.imrul.educonnect.presentation.screen_send_message.model.Message
 import kotlinx.coroutines.flow.Flow
 
 class AuthenticationRepoImplementation(private val dataSource: AuthenticationDataSource) :
@@ -34,16 +33,8 @@ class AuthenticationRepoImplementation(private val dataSource: AuthenticationDat
         )
     }
 
-    override suspend fun getMessages(
-        senderId: String?,
-        receiverId: String?
-    ): Flow<MutableList<Message>> = dataSource.getMessages(
-        senderId = senderId,
-        receiverId = receiverId
-    )
-
     override fun currentUser(): FirebaseUser? = dataSource.currentUser()
-    override suspend fun fetchItems(id1: String?, id2: String?): MutableList<Message> =
+    override suspend fun fetchItems(id1: String?, id2: String?): Query =
         dataSource.fetchItems(id1 = id1, id2 = id2)
 
     override fun signOut() = dataSource.signOut()

@@ -17,8 +17,10 @@ import com.imrul.educonnect.core.Constants.Companion.USERS_COLLECTION
 import com.imrul.educonnect.domain.model.User
 import com.imrul.educonnect.domain.network.AuthenticationDataSource
 import com.imrul.educonnect.presentation.screen_send_message.model.Message
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -27,6 +29,7 @@ import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import java.sql.Types.TIMESTAMP
@@ -91,7 +94,6 @@ class AuthenticationDataSourceImplementation(
         message: String?,
     ) {
         senderId?.let { sender ->
-            Log.d("Problem", "SendMessageScreen: clicked")
             receiverId?.let { receiver ->
                 message?.let { msg ->
                     val data = hashMapOf(
@@ -130,85 +132,8 @@ class AuthenticationDataSourceImplementation(
             }
     }
 
-    override suspend fun getMessages(
-        senderId: String?,
-        receiverId: String?
-    ): Flow<MutableList<Message>> {
-        val combinedQuery = fireStore.collection(MESSAGES_COLLECTION)
-//            .whereEqualTo("senderId", senderId)
-//            .whereEqualTo("receiverId", listOf(senderId, receiverId))
-//            .orderBy("timestamp", Query.Direction.DESCENDING)
-
-
-        return combinedQuery.snapshotFlow()
-            .map { snapshot ->
-                val messagesList = mutableListOf<Message>()
-                snapshot.documents.forEach { document ->
-                    val message = document.toObject(Message::class.java)
-                    message?.let { messagesList.add(it) }
-                }
-                messagesList
-            }
-    }
-
-//    override suspend fun fetchItems(id1: String?, id2: String?): MutableList<Message>  {
-//        val itemsCollection = fireStore.collection(MESSAGES_COLLECTION)
-//            .orderBy("timestamp", Query.Direction.ASCENDING)
-//
-//
-//        val itemsList = mutableListOf<Message>()
-//        itemsCollection.addSnapshotListener { snapshot, error ->
-//            if (error != null) {
-//                // Handle error
-//                return@addSnapshotListener
-//            }
-//            if (snapshot != null) {
-//                for (doc in snapshot) {
-//                    val item = doc.toObject(Message::class.java)
-//                    if ((item.senderId == id1 && item.receiverId == id2) || (item.senderId == id2 && item.receiverId == id1)) {
-//                        itemsList.add(item)
-//                    }
-//                }
-//            }
-//            Log.d("problem", "inside listener:$itemsList")
-//        }
-////        delay(1000)
-//        Log.d("problem", "outside listener:$itemsList")
-//
-//        return itemsList  // Return the populated list
-//    }
-
-    override suspend fun fetchItems(id1: String?, id2: String?): MutableList<Message> =
-        suspendCancellableCoroutine { continuation ->
-            val itemsCollection = fireStore.collection(MESSAGES_COLLECTION)
-                .orderBy("timestamp", Query.Direction.ASCENDING)
-
-            val itemsList = mutableListOf<Message>()
-
-            val listenerRegistration = itemsCollection.addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    // Handle error
-                    continuation.resumeWithException(error)
-                    return@addSnapshotListener
-                }
-                if (snapshot != null) {
-                    itemsList.clear() // Clear list before populating again
-                    for (doc in snapshot) {
-                        val item = doc.toObject(Message::class.java)
-                        if ((item.senderId == id1 && item.receiverId == id2) || (item.senderId == id2 && item.receiverId == id1)) {
-                            itemsList.add(item)
-                        }
-                    }
-                    Log.d("problem", "inside listener:$itemsList")
-                    continuation.resume(itemsList)
-                }
-            }
-
-            continuation.invokeOnCancellation {
-                // Cancel the listener registration if coroutine is cancelled
-                listenerRegistration.remove()
-            }
-        }
+    override suspend fun fetchItems(id1: String?, id2: String?): Query = fireStore.collection(MESSAGES_COLLECTION)
+        .orderBy("timestamp", Query.Direction.ASCENDING)
 
 
     // Additional Firebase Functions

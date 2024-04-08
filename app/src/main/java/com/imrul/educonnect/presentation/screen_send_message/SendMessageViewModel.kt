@@ -6,14 +6,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.Timestamp
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.imrul.educonnect.core.Constants.Companion.MESSAGES_COLLECTION
 import com.imrul.educonnect.core.Resource
 import com.imrul.educonnect.domain.user_cases.FetchMessagesUseCase
-import com.imrul.educonnect.domain.user_cases.GetMessagesUseCase
 import com.imrul.educonnect.domain.user_cases.GetUserUseCase
 import com.imrul.educonnect.domain.user_cases.SendMessageUseCase
 import com.imrul.educonnect.presentation.screen_login.model.LoginState
@@ -21,6 +19,7 @@ import com.imrul.educonnect.presentation.screen_login.model.UserState
 import com.imrul.educonnect.presentation.screen_send_message.model.Message
 import com.imrul.educonnect.presentation.screen_send_message.model.MessageState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,7 +32,6 @@ import javax.inject.Inject
 class SendMessageViewModel @Inject constructor(
     private val sendMessageUseCase: SendMessageUseCase,
     private val getUserUseCase: GetUserUseCase,
-    private val getMessagesUseCase: GetMessagesUseCase,
     private val fetchMessagesUseCase: FetchMessagesUseCase,
 
     ) : ViewModel() {
@@ -49,9 +47,6 @@ class SendMessageViewModel @Inject constructor(
 
     private val _messageState = MutableStateFlow(MessageState())
     val messageState = _messageState.asStateFlow()
-    /*
-        private var _messagesState = mutableStateListOf<Message?>()
-        val messagesState: SnapshotStateList<Message?> = _messagesState*/
 
     private val _messagesState = MutableStateFlow<List<Message>>(emptyList())
     val messagesState: StateFlow<List<Message>> get() = _messagesState
@@ -61,30 +56,7 @@ class SendMessageViewModel @Inject constructor(
     }
 
     private fun clearActions() {
-//        MessageState(message = null, isLoading = false, error = null)
         sendMessageText = ""
-    }
-
-    fun fetchItems(id1: String?, id2: String?) {
-        val db = Firebase.firestore
-        val itemsCollection = db.collection(MESSAGES_COLLECTION)
-            .orderBy("timestamp", Query.Direction.ASCENDING)
-
-        itemsCollection.addSnapshotListener { snapshot, error ->
-            if (error != null) {
-                // Handle error
-                return@addSnapshotListener
-            }
-
-            val itemsList = mutableListOf<Message>()
-            for (doc in snapshot!!) {
-                val item = doc.toObject(Message::class.java)
-                if ((item.senderId == id1 && item.receiverId == id2) || (item.senderId == id2 && item.receiverId == id1)) {
-                    itemsList.add(item)
-                }
-            }
-            _messagesState.value = itemsList
-        }
     }
 
     fun getUser(uid: String) {
@@ -105,6 +77,7 @@ class SendMessageViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+
     fun fetchMessages(
         senderId: String?,
         receiverId: String?
@@ -114,18 +87,23 @@ class SendMessageViewModel @Inject constructor(
     ).onEach { result ->
         when (result) {
             is Resource.Success -> {
-                result.data?.let { list ->
-                    Log.d("problem", "fetchItems from viewModel:$list")
-                    _messagesState.value = list
+                result.data?.addSnapshotListener { snapshot, _ ->
+                    val itemsList = mutableListOf<Message>()
+                    for (doc in snapshot!!) {
+                        val item = doc.toObject(Message::class.java)
+                        if ((item.senderId == senderId && item.receiverId == receiverId) || (item.senderId == receiverId && item.receiverId == senderId)) {
+                            itemsList.add(item)
+                        }
+                    }
+                    _messagesState.value = itemsList
                 }
             }
 
             is Resource.Error -> {
-//                    _usersState.value = UserState(error = result.message.toString())
+
             }
 
             is Resource.Loading -> {
-//                    _userState.value = UserState(isLoading = true)
             }
         }
     }.launchIn(viewModelScope)

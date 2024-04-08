@@ -2,11 +2,9 @@ package com.imrul.educonnect.domain.user_cases
 
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.firestore.Query
 import com.imrul.educonnect.core.Resource
 import com.imrul.educonnect.domain.repository.AuthenticationRepository
-import com.imrul.educonnect.presentation.screen_send_message.model.Message
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -17,7 +15,7 @@ class FetchMessagesUseCase @Inject constructor(
     operator fun invoke(
         senderId: String?,
         receiverId: String?
-    ): Flow<Resource<MutableList<Message>>> = flow {
+    ): Flow<Resource<Query>> = flow {
         try {
             emit(Resource.Loading())
             repository.fetchItems(id1 = senderId, id2 = receiverId).apply {
