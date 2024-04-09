@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.imrul.educonnect.core.Resource
+import com.imrul.educonnect.domain.repository.AuthenticationRepository
 import com.imrul.educonnect.domain.user_cases.FetchAllMessagesUseCase
 import com.imrul.educonnect.domain.user_cases.GetUserUseCase
 import com.imrul.educonnect.domain.user_cases.GetUsersUseCase
@@ -16,28 +17,25 @@ import com.imrul.educonnect.presentation.screen_login.model.UserState
 import com.imrul.educonnect.presentation.screen_messages.model.Conversation
 import com.imrul.educonnect.presentation.screen_send_message.model.Message
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MessageViewModel @Inject constructor(
     private val fetchAllMessagesUseCase: FetchAllMessagesUseCase,
-    private val getUserUseCase: GetUserUseCase,
-    private val getUsersUseCase: GetUsersUseCase,
+    private val repository: AuthenticationRepository
 ) : ViewModel() {
 
     private val _allConversations = mutableStateListOf<Conversation>()
     val allConversations = _allConversations
 
-    private val _textReceiverUserState = MutableStateFlow(UserState())
-    val textReceiverUserState = _textReceiverUserState.asStateFlow()
-    fun fetchAllMessagesOfaUser(
-
-    ) = fetchAllMessagesUseCase().onEach { result ->
+    fun fetchAllMessagesOfaUser() = fetchAllMessagesUseCase().onEach { result ->
         when (result) {
             is Resource.Success -> {
                 // this is logic should be in the useCase or Data Source. but if i use the listener in the useCase it is not updating in realtime.
@@ -54,17 +52,16 @@ class MessageViewModel @Inject constructor(
                             if (item.senderId == currentUserId) item.receiverId else item.senderId
                         messagesMap[otherUserId] = item.message
                     }
-
-                    for ((otherUid, latestMessage) in messagesMap) {
-                        if (otherUid != null) {
-                            getUser(otherUid)
+                    viewModelScope.launch {
+                        _allConversations.clear()
+                        for ((otherUid, latestMessage) in messagesMap) {
+                            val conversation = Conversation(
+                                username = repository.getUser(otherUid)?.displayName,
+                                latestMessage = latestMessage,
+                                otherUID = otherUid
+                            )
+                            _allConversations.add(conversation)
                         }
-                        val conversation = Conversation(
-                            username = textReceiverUserState.value.user?.displayName,
-                            latestMessage = latestMessage,
-                            otherUID = otherUid
-                        )
-                        _allConversations.add(conversation)
                     }
                     Log.d("new problem", "fetchAllMessagesOfaUser: $conversationList")
                 }
@@ -79,44 +76,4 @@ class MessageViewModel @Inject constructor(
             }
         }
     }.launchIn(viewModelScope)
-
-    fun getUser(uid: String) {
-        getUserUseCase(uid).onEach { result ->
-            when (result) {
-                is Resource.Success -> {
-                    _textReceiverUserState.value = UserState(user = result.data)
-                }
-
-                is Resource.Error -> {
-                    _textReceiverUserState.value = UserState(error = result.data.toString())
-                }
-
-                is Resource.Loading -> {
-                    _textReceiverUserState.value = UserState(isLoading = true)
-                }
-            }
-        }.launchIn(viewModelScope)
-    }
-//
-//    fun getUsers(uid: String? = _loginState.value.user?.uid) =
-//        getUsersUseCase(uid).onEach { result ->
-//            when (result) {
-//                is Resource.Success -> {
-//                    result.data?.let { list ->
-//                        list.forEach { user ->
-//                            _usersState.add(user)
-//                        }
-//                    }
-//                }
-//
-//                is Resource.Error -> {
-////                    _usersState.value = UserState(error = result.message.toString())
-//                }
-//
-//                is Resource.Loading -> {
-//
-////                    _userState.value = UserState(isLoading = true)
-//                }
-//            }
-//        }.launchIn(viewModelScope)
 }

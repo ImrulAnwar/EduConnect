@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -18,13 +17,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.imrul.educonnect.core.Constants.Companion.MESSAGES_PLACEHOLDER
-import com.imrul.educonnect.core.Constants.Companion.RECEIVER_UID_VARIABLE_NAME
-import com.imrul.educonnect.core.Constants.Companion.USERS_COLLECTION
 import com.imrul.educonnect.core.Routes.Companion.SEND_MESSAGE_SCREEN_ROUTE
+import com.imrul.educonnect.presentation.components.ConversationComponent
 import com.imrul.educonnect.presentation.components.CustomText
 import com.imrul.educonnect.presentation.components.UserComponent
 import com.imrul.educonnect.presentation.screen_login.LoginViewModel
-import kotlinx.coroutines.flow.toList
 
 @Composable
 fun MessagesScreen(
@@ -35,12 +32,16 @@ fun MessagesScreen(
 
     LaunchedEffect(Unit) {
         viewModel.getUsers()
+    }
+    LaunchedEffect(Unit) {
         messageViewModel.fetchAllMessagesOfaUser()
     }
     Column(
         verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()
+        horizontalAlignment = Alignment.Start,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(0.dp, 0.dp, 0.dp, 80.dp)
     ) {
         CustomText(
             text = MESSAGES_PLACEHOLDER,
@@ -61,11 +62,13 @@ fun MessagesScreen(
 
         LazyColumn {
             items(messageViewModel.allConversations.toList()) { conversation ->
-                conversation?.let {
-                    it.latestMessage?.let { it1 ->
-                        Text(it1)
+                ConversationComponent(
+                    username = conversation.username,
+                    latestMessage = conversation.latestMessage,
+                    onClick = {
+                        navController.navigate("$SEND_MESSAGE_SCREEN_ROUTE/${conversation.otherUID}")
                     }
-                }
+                )
             }
         }
     }
