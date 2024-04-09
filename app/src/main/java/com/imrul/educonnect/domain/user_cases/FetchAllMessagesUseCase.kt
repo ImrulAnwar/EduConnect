@@ -9,13 +9,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class FetchMessagesUseCase @Inject constructor(
+class FetchAllMessagesUseCase @Inject constructor(
     private val repository: AuthenticationRepository
 ) {
-    operator fun invoke(
-        senderId: String?,
-        receiverId: String?
-    ): Flow<Resource<Query>> = flow {
+
+    operator fun invoke(): Flow<Resource<Query>> = flow {
         try {
             emit(Resource.Loading())
             repository.fetchAllMessages().apply {

@@ -34,8 +34,8 @@ class AuthenticationRepoImplementation(private val dataSource: AuthenticationDat
     }
 
     override fun currentUser(): FirebaseUser? = dataSource.currentUser()
-    override suspend fun fetchItems(id1: String?, id2: String?): Query =
-        dataSource.fetchItems(id1 = id1, id2 = id2)
+    override suspend fun fetchAllMessages(): Query =
+        dataSource.fetchAllMessages()
 
     override fun signOut() = dataSource.signOut()
 }

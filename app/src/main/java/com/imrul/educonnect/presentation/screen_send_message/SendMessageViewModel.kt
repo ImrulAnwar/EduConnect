@@ -88,6 +88,7 @@ class SendMessageViewModel @Inject constructor(
         when (result) {
             is Resource.Success -> {
                 //  this is logic should be in the useCase or Data Source. but if i use the listener in the useCase it is not updating in realtime.
+                // also if this fails app might crash
                 result.data?.addSnapshotListener { snapshot, _ ->
                     val itemsList = mutableListOf<Message>()
                     for (doc in snapshot!!) {
