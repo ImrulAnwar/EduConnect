@@ -45,7 +45,7 @@ class MessageViewModel @Inject constructor(
                     val conversationList = mutableListOf<Conversation>()
                     val currentUserId = Firebase.auth.currentUser?.uid
                     var otherUserId: String?
-                    val messagesMap = mutableMapOf<String?, String?>()
+                    val messagesMap = LinkedHashMap<String?, String?>()
                     for (doc in snapshot!!) {
                         val item = doc.toObject(Message::class.java)
                         otherUserId =
