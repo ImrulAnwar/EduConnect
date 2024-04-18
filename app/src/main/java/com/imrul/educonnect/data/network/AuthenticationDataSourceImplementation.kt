@@ -111,10 +111,9 @@ class AuthenticationDataSourceImplementation(
             }
     }
 
-    override suspend fun fetchAllMessages(): Query = fireStore.collection(MESSAGES_COLLECTION)
-        .orderBy("timestamp", Query.Direction.ASCENDING)
-
-
+    override suspend fun fetchAllMessages(order: Query.Direction): Query =
+        fireStore.collection(MESSAGES_COLLECTION)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
 
 
     // Additional Firebase Functions

@@ -18,7 +18,7 @@ class FetchMessagesUseCase @Inject constructor(
     ): Flow<Resource<Query>> = flow {
         try {
             emit(Resource.Loading())
-            repository.fetchAllMessages().apply {
+            repository.fetchAllMessages(Query.Direction.DESCENDING).apply {
                 emit(Resource.Success(this))
             }
         } catch (e: FirebaseAuthException) {

@@ -12,11 +12,10 @@ import javax.inject.Inject
 class FetchAllMessagesUseCase @Inject constructor(
     private val repository: AuthenticationRepository
 ) {
-
     operator fun invoke(): Flow<Resource<Query>> = flow {
         try {
             emit(Resource.Loading())
-            repository.fetchAllMessages().apply {
+            repository.fetchAllMessages(Query.Direction.ASCENDING).apply {
                 emit(Resource.Success(this))
             }
         } catch (e: FirebaseAuthException) {

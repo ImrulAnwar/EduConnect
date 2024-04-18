@@ -22,6 +22,6 @@ interface AuthenticationRepository {
 
     fun currentUser(): FirebaseUser?
 
-    suspend fun fetchAllMessages(): Query
+    suspend fun fetchAllMessages(order: Query.Direction): Query
     fun signOut()
 }

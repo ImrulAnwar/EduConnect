@@ -20,7 +20,7 @@ interface AuthenticationDataSource {
         message: String?,
     )
 
-    suspend fun fetchAllMessages(): Query
+    suspend fun fetchAllMessages(order: Query.Direction): Query
     fun currentUser(): FirebaseUser?
 
     fun signOut()
