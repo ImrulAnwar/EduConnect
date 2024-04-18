@@ -123,7 +123,7 @@ fun SendMessageScreen(
                 .fillMaxWidth(),
             state = listState
         ) {
-            items(messagesState) { message ->
+            items(messagesState.reversed()) { message ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = if (message.senderId == loginState.user?.uid)
