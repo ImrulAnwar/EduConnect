@@ -41,14 +41,12 @@ class MessageViewModel @Inject constructor(
                 // this is logic should be in the useCase or Data Source. but if i use the listener in the useCase it is not updating in realtime.
                 // also if this fails app might crash
                 result.data?.addSnapshotListener { snapshot, _ ->
-                    _allConversations.clear()
-                    val conversationList = mutableListOf<Conversation>()
                     val currentUserId = Firebase.auth.currentUser?.uid
                     var otherUserId: String?
                     val messagesMap = LinkedHashMap<String?, String?>()
                     for (doc in snapshot!!) {
                         val item = doc.toObject(Message::class.java)
-                        Log.d("new problem", "item: $messagesMap")
+//                        Log.d("new problem", "item: $messagesMap")
                         otherUserId =
                             if (item.senderId == currentUserId) {
                                 item.receiverId
@@ -56,7 +54,6 @@ class MessageViewModel @Inject constructor(
                         if (messagesMap[otherUserId] == null) messagesMap[otherUserId] =
                             item.message
                     }
-                    Log.d("new problem", "map: $messagesMap")
                     viewModelScope.launch {
                         _allConversations.clear()
                         for ((otherUid, latestMessage) in messagesMap) {
@@ -69,7 +66,6 @@ class MessageViewModel @Inject constructor(
                         }
                     }
                 }
-
             }
 
             is Resource.Error -> {
