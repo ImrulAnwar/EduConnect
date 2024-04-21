@@ -66,24 +66,24 @@ class LoginViewModel @Inject constructor(
     val connectivityState = _connectivityState.asStateFlow()
 
     // Placeholder Validation Check
-    fun isEmailValid(): Boolean {
-        return if (emailText.isNotEmpty() && passwordText.isNotEmpty()) {
-            Patterns.EMAIL_ADDRESS.matcher(emailText).matches()
-        } else {
-            true
-        }
-    }
-
-    fun isPasswordValid(): Boolean {
-        return if (emailText.isNotEmpty() && passwordText.isNotEmpty()) {
-            passwordText.length > 5
-        } else {
-            true
-        }
-    }
-
-    fun checkValidation(): Boolean =
-        Patterns.EMAIL_ADDRESS.matcher(emailText).matches() && passwordText.length > 5
+//    fun isEmailValid(): Boolean {
+////        return if (emailText.isNotEmpty() && passwordText.isNotEmpty()) {
+////            Patterns.EMAIL_ADDRESS.matcher(emailText).matches()
+////        } else {
+////            true
+////        }
+////    }
+////
+////    fun isPasswordValid(): Boolean {
+////        return if (emailText.isNotEmpty() && passwordText.isNotEmpty()) {
+////            passwordText.length > 5
+////        } else {
+////            true
+////        }
+////    }
+////
+////    fun checkValidation(): Boolean =
+////        Patterns.EMAIL_ADDRESS.matcher(emailText).matches() && passwordText.length > 5
 
     // Clearing User Filled Form for the security reasons.
     private fun clearActions() {
